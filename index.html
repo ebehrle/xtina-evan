@@ -203,7 +203,7 @@
         type="text"
         id="name-input"
         name="submitter_name"
-        autocomplete="off"
+        autocomplete="new-password"
         placeholder="Start typing your name&hellip;"
         required
       />
@@ -375,6 +375,10 @@
     // Hide suggestions when clicking elsewhere
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.autocomplete-wrapper')) hideSuggestions();
+    });
+
+    nameInput.addEventListener('focus', () => {
+      if (nameInput.value.trim().length === 0) hideSuggestions();
     });
 
     nameInput.addEventListener('blur', () => {
