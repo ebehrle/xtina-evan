@@ -139,6 +139,35 @@
       color: #888;
       font-style: italic;
     }
+
+    /* Custom autocomplete dropdown */
+    .autocomplete-wrapper {
+      position: relative;
+    }
+
+    #suggestions {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      border: 1px solid #aaa;
+      border-top: none;
+      background: #fff;
+      z-index: 100;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    #suggestions div {
+      padding: 6px 8px;
+      cursor: pointer;
+    }
+
+    #suggestions div:hover,
+    #suggestions div.active {
+      background: #f0f0f0;
+    }
   </style>
 </head>
 <body>
@@ -169,16 +198,17 @@
     id="rsvp-form"
   >
     <label for="name-input">Your name</label>
-    <input
-      type="text"
-      id="name-input"
-      name="submitter_name"
-      autocomplete="off"
-      list="guest-names"
-      placeholder="Start typing your name&hellip;"
-      required
-    />
-    <datalist id="guest-names"></datalist>
+    <div class="autocomplete-wrapper">
+      <input
+        type="text"
+        id="name-input"
+        name="submitter_name"
+        autocomplete="off"
+        placeholder="Start typing your name&hellip;"
+        required
+      />
+      <div id="suggestions"></div>
+    </div>
 
     <p class="not-found-msg" id="not-found-msg">
       Name not found on guest list. Please check your spelling or contact us directly.
@@ -194,20 +224,17 @@
 
   <script>
     let guests = [];
-
-    // Build a flat name → household index map
-    let nameMap = {};
+    let allNames = [];   // [{name, householdIdx}]
+    let nameMap = {};    // lowercase name → household index
+    let activeIdx = -1;  // keyboard navigation index
 
     async function loadGuests() {
       const res = await fetch('guests.json');
       guests = await res.json();
-      const datalist = document.getElementById('guest-names');
       guests.forEach((household, i) => {
         household.members.forEach(name => {
           nameMap[name.toLowerCase()] = i;
-          const opt = document.createElement('option');
-          opt.value = name;
-          datalist.appendChild(opt);
+          allNames.push({ name, householdIdx: i });
         });
       });
     }
@@ -215,9 +242,40 @@
     loadGuests();
 
     const nameInput = document.getElementById('name-input');
+    const suggestionsBox = document.getElementById('suggestions');
     const householdSection = document.getElementById('household-section');
     const notFoundMsg = document.getElementById('not-found-msg');
     const submitBtn = document.getElementById('submit-btn');
+
+    function showSuggestions(matches) {
+      suggestionsBox.innerHTML = '';
+      activeIdx = -1;
+      if (matches.length === 0) {
+        suggestionsBox.style.display = 'none';
+        return;
+      }
+      matches.forEach((item, i) => {
+        const div = document.createElement('div');
+        div.textContent = item.name;
+        div.addEventListener('mousedown', () => selectName(item.name));
+        suggestionsBox.appendChild(div);
+      });
+      suggestionsBox.style.display = 'block';
+    }
+
+    function hideSuggestions() {
+      suggestionsBox.style.display = 'none';
+      activeIdx = -1;
+    }
+
+    function selectName(name) {
+      nameInput.value = name;
+      hideSuggestions();
+      const idx = nameMap[name.toLowerCase()];
+      if (idx !== undefined) {
+        renderHousehold(guests[idx]);
+      }
+    }
 
     function attendanceSelect(fieldName) {
       return `<select name="${fieldName}" required>
@@ -229,7 +287,6 @@
 
     function renderHousehold(household) {
       let html = '';
-
       household.members.forEach(name => {
         const key = name.replace(/\s+/g, '_');
         html += `<div class="member-block">
@@ -240,7 +297,6 @@
           ${attendanceSelect(`${key}__ceremony`)}
         </div>`;
       });
-
       if (household.plus_one) {
         html += `<div class="member-block">
           <label>Guest name (if bringing a +1)</label>
@@ -251,12 +307,10 @@
           ${attendanceSelect('plus_one__ceremony')}
         </div>`;
       }
-
       html += `<div class="member-block">
         <label>Dietary restrictions or notes (optional)</label>
         <textarea name="dietary"></textarea>
       </div>`;
-
       householdSection.innerHTML = html;
       householdSection.style.display = 'block';
       submitBtn.style.display = 'inline-block';
@@ -270,15 +324,62 @@
     }
 
     nameInput.addEventListener('input', () => {
-      const val = nameInput.value.trim().toLowerCase();
-      const idx = nameMap[val];
-      if (idx !== undefined) {
-        renderHousehold(guests[idx]);
-      } else {
-        clearHousehold();
-        // Show "not found" only if something is typed and doesn't match
-        notFoundMsg.style.display = val.length > 1 ? 'block' : 'none';
+      const val = nameInput.value.trim();
+      clearHousehold();
+      notFoundMsg.style.display = 'none';
+
+      if (val.length === 0) {
+        hideSuggestions();
+        return;
       }
+
+      const lower = val.toLowerCase();
+      const matches = allNames.filter(item =>
+        item.name.toLowerCase().startsWith(lower)
+      );
+
+      showSuggestions(matches);
+
+      // If the typed value is an exact match, render the household
+      const exactIdx = nameMap[lower];
+      if (exactIdx !== undefined) {
+        renderHousehold(guests[exactIdx]);
+        notFoundMsg.style.display = 'none';
+      } else if (matches.length === 0 && val.length > 1) {
+        notFoundMsg.style.display = 'block';
+      }
+    });
+
+    // Keyboard navigation
+    nameInput.addEventListener('keydown', (e) => {
+      const items = suggestionsBox.querySelectorAll('div');
+      if (!items.length) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        activeIdx = Math.min(activeIdx + 1, items.length - 1);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        activeIdx = Math.max(activeIdx - 1, 0);
+      } else if (e.key === 'Enter' && activeIdx >= 0) {
+        e.preventDefault();
+        selectName(items[activeIdx].textContent);
+        return;
+      } else if (e.key === 'Escape') {
+        hideSuggestions();
+        return;
+      }
+      items.forEach((el, i) => el.classList.toggle('active', i === activeIdx));
+      if (activeIdx >= 0) items[activeIdx].scrollIntoView({ block: 'nearest' });
+    });
+
+    // Hide suggestions when clicking elsewhere
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.autocomplete-wrapper')) hideSuggestions();
+    });
+
+    nameInput.addEventListener('blur', () => {
+      // Small delay so mousedown on a suggestion fires first
+      setTimeout(hideSuggestions, 150);
     });
 
     // Handle submit
