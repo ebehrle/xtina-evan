@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cristina &amp; Evan</title>
+  <style>
+    body {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 15px;
+      line-height: 1.6;
+      max-width: 640px;
+      margin: 60px auto;
+      padding: 0 20px 80px;
+      color: #111;
+      background: #fff;
+    }
+
+    h1 {
+      font-size: 1.6em;
+      font-weight: normal;
+      margin-bottom: 0.2em;
+    }
+
+    h2 {
+      font-size: 1em;
+      font-weight: bold;
+      margin-top: 2em;
+      margin-bottom: 0.4em;
+      border-bottom: 1px solid #111;
+      padding-bottom: 0.2em;
+    }
+
+    p {
+      margin: 0.4em 0;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    ul li {
+      margin-bottom: 1.2em;
+    }
+
+    .event-name {
+      font-weight: bold;
+    }
+
+    a {
+      color: #111;
+    }
+
+    a:hover {
+      color: #555;
+    }
+
+    form {
+      margin-top: 0.6em;
+    }
+
+    label {
+      display: block;
+      margin-top: 1em;
+      margin-bottom: 0.2em;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    select,
+    textarea {
+      width: 100%;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1em;
+      border: 1px solid #aaa;
+      padding: 6px 8px;
+      box-sizing: border-box;
+      background: #fff;
+      color: #111;
+    }
+
+    textarea {
+      height: 80px;
+      resize: vertical;
+    }
+
+    button[type="submit"] {
+      margin-top: 1.2em;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1em;
+      background: none;
+      border: 1px solid #111;
+      padding: 6px 20px;
+      cursor: pointer;
+      color: #111;
+    }
+
+    button[type="submit"]:hover {
+      background: #111;
+      color: #fff;
+    }
+
+    .thank-you {
+      display: none;
+      margin-top: 0.8em;
+    }
+
+    /* Household RSVP section */
+    #household-section {
+      display: none;
+      margin-top: 1.4em;
+    }
+
+    .member-block {
+      margin-top: 1.4em;
+      padding-top: 1em;
+      border-top: 1px solid #ddd;
+    }
+
+    .member-block:first-child {
+      border-top: none;
+      padding-top: 0;
+    }
+
+    .member-name {
+      font-weight: bold;
+      margin-bottom: 0.6em;
+    }
+
+    .member-block label {
+      margin-top: 0.6em;
+    }
+
+    .not-found-msg {
+      display: none;
+      margin-top: 0.6em;
+      color: #888;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Cristina Ballarini &amp; Evan Behrle</h1>
+  <p>Saturday, May 2027 &mdash; New York City</p>
+
+  <h2>Events</h2>
+  <ul>
+    <li>
+      <p class="event-name">Welcome Party</p>
+      <p>Friday, May [TBD], 2027 &mdash; 8:00 pm</p>
+      <p>[Venue TBD], New York City</p>
+    </li>
+    <li>
+      <p class="event-name">Ceremony &amp; Reception</p>
+      <p>Saturday, May [TBD], 2027 &mdash; 5:00 pm</p>
+      <p>[Venue TBD], New York City</p>
+    </li>
+  </ul>
+
+  <h2>RSVP</h2>
+  <p>Please RSVP by [date TBD].</p>
+
+  <form
+    action="https://formspree.io/f/YOUR_FORM_ID"
+    method="POST"
+    id="rsvp-form"
+  >
+    <label for="name-input">Your name</label>
+    <input
+      type="text"
+      id="name-input"
+      name="submitter_name"
+      autocomplete="off"
+      list="guest-names"
+      placeholder="Start typing your name&hellip;"
+      required
+    />
+    <datalist id="guest-names"></datalist>
+
+    <p class="not-found-msg" id="not-found-msg">
+      Name not found on guest list. Please check your spelling or contact us directly.
+    </p>
+
+    <!-- Populated dynamically once a household is matched -->
+    <div id="household-section"></div>
+
+    <button type="submit" id="submit-btn" style="display:none;">Submit</button>
+  </form>
+
+  <p class="thank-you" id="thank-you">Thank you &mdash; we look forward to celebrating with you.</p>
+
+  <script>
+    let guests = [];
+
+    // Build a flat name → household index map
+    let nameMap = {};
+
+    async function loadGuests() {
+      const res = await fetch('guests.json');
+      guests = await res.json();
+      const datalist = document.getElementById('guest-names');
+      guests.forEach((household, i) => {
+        household.members.forEach(name => {
+          nameMap[name.toLowerCase()] = i;
+          const opt = document.createElement('option');
+          opt.value = name;
+          datalist.appendChild(opt);
+        });
+      });
+    }
+
+    loadGuests();
+
+    const nameInput = document.getElementById('name-input');
+    const householdSection = document.getElementById('household-section');
+    const notFoundMsg = document.getElementById('not-found-msg');
+    const submitBtn = document.getElementById('submit-btn');
+
+    function attendanceSelect(fieldName) {
+      return `<select name="${fieldName}" required>
+        <option value="">-- select --</option>
+        <option value="yes">Attending</option>
+        <option value="no">Not attending</option>
+      </select>`;
+    }
+
+    function renderHousehold(household) {
+      let html = '';
+
+      household.members.forEach(name => {
+        const key = name.replace(/\s+/g, '_');
+        html += `<div class="member-block">
+          <p class="member-name">${name}</p>
+          <label>Welcome Party (Friday)</label>
+          ${attendanceSelect(`${key}__welcome`)}
+          <label>Ceremony &amp; Reception (Saturday)</label>
+          ${attendanceSelect(`${key}__ceremony`)}
+        </div>`;
+      });
+
+      if (household.plus_one) {
+        html += `<div class="member-block">
+          <label>Guest name (if bringing a +1)</label>
+          <input type="text" name="plus_one_name" placeholder="Full name (leave blank if not bringing a guest)" />
+          <label>Welcome Party (Friday)</label>
+          ${attendanceSelect('plus_one__welcome')}
+          <label>Ceremony &amp; Reception (Saturday)</label>
+          ${attendanceSelect('plus_one__ceremony')}
+        </div>`;
+      }
+
+      html += `<div class="member-block">
+        <label>Dietary restrictions or notes (optional)</label>
+        <textarea name="dietary"></textarea>
+      </div>`;
+
+      householdSection.innerHTML = html;
+      householdSection.style.display = 'block';
+      submitBtn.style.display = 'inline-block';
+      notFoundMsg.style.display = 'none';
+    }
+
+    function clearHousehold() {
+      householdSection.innerHTML = '';
+      householdSection.style.display = 'none';
+      submitBtn.style.display = 'none';
+    }
+
+    nameInput.addEventListener('input', () => {
+      const val = nameInput.value.trim().toLowerCase();
+      const idx = nameMap[val];
+      if (idx !== undefined) {
+        renderHousehold(guests[idx]);
+      } else {
+        clearHousehold();
+        // Show "not found" only if something is typed and doesn't match
+        notFoundMsg.style.display = val.length > 1 ? 'block' : 'none';
+      }
+    });
+
+    // Handle submit
+    const form = document.getElementById('rsvp-form');
+    const thanks = document.getElementById('thank-you');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: data,
+        headers: { Accept: 'application/json' }
+      });
+      if (res.ok) {
+        form.style.display = 'none';
+        thanks.style.display = 'block';
+      } else {
+        alert('Something went wrong. Please try again or email us directly.');
+      }
+    });
+  </script>
+
+</body>
+</html>
