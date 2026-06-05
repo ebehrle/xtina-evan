@@ -290,9 +290,17 @@
       </select>`;
     }
 
+    function lastName(name) {
+      const parts = name.trim().split(/\s+/);
+      return parts[parts.length - 1].toLowerCase();
+    }
+
     function renderHousehold(household) {
       let html = '';
-      household.members.forEach(name => {
+      const members = [...household.members].sort((a, b) =>
+        lastName(a).localeCompare(lastName(b))
+      );
+      members.forEach(name => {
         const key = name.replace(/\s+/g, '_');
         html += `<div class="member-block">
           <p class="member-name">${name}</p>
