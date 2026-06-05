@@ -298,6 +298,8 @@
           ${attendanceSelect(`${key}__welcome`)}
           <label>Ceremony &amp; Reception (Saturday)</label>
           ${attendanceSelect(`${key}__ceremony`)}
+          <label>Dietary restrictions or notes (optional)</label>
+          <textarea name="${key}__dietary"></textarea>
         </div>`;
       });
       if (household.plus_one) {
@@ -308,12 +310,10 @@
           ${attendanceSelect('plus_one__welcome')}
           <label>Ceremony &amp; Reception (Saturday)</label>
           ${attendanceSelect('plus_one__ceremony')}
+          <label>Dietary restrictions or notes (optional)</label>
+          <textarea name="plus_one__dietary"></textarea>
         </div>`;
       }
-      html += `<div class="member-block">
-        <label>Dietary restrictions or notes (optional)</label>
-        <textarea name="dietary"></textarea>
-      </div>`;
       householdSection.innerHTML = html;
       householdSection.style.display = 'block';
       submitBtn.style.display = 'inline-block';
