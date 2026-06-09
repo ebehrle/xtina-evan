@@ -221,6 +221,11 @@
     <!-- Populated dynamically once a household is matched -->
     <div id="household-section"></div>
 
+    <div id="email-section" style="display:none;">
+      <label for="email-input">Email address</label>
+      <input type="email" id="email-input" name="email" />
+    </div>
+
     <button type="submit" id="submit-btn" style="display:none;">Submit</button>
   </form>
 
@@ -253,6 +258,7 @@
     const householdSection = document.getElementById('household-section');
     const notFoundMsg = document.getElementById('not-found-msg');
     const submitBtn = document.getElementById('submit-btn');
+    const emailSection = document.getElementById('email-section');
 
     function showSuggestions(matches) {
       suggestionsBox.innerHTML = '';
@@ -328,6 +334,7 @@
       }
       householdSection.innerHTML = html;
       householdSection.style.display = 'block';
+      emailSection.style.display = 'block';
       submitBtn.style.display = 'inline-block';
       notFoundMsg.style.display = 'none';
     }
@@ -335,6 +342,7 @@
     function clearHousehold() {
       householdSection.innerHTML = '';
       householdSection.style.display = 'none';
+      emailSection.style.display = 'none';
       submitBtn.style.display = 'none';
     }
 
