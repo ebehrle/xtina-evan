@@ -242,6 +242,251 @@
   <p>We don't have a registry. In lieu of gifts, you can contribute to the fundraiser we've organized with GiveDirectly.</p>
 
   <h2>Things to do in NYC</h2>
+  <p><a href="https://maps.app.goo.gl/ukhHXmCnWZLnEPak6">Here's a Google Maps list of some of our favorite places in the city.</a></p>
+YPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cristina &amp; Evan</title>
+  <style>
+    body {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 15px;
+      line-height: 1.6;
+      max-width: 640px;
+      margin: 60px auto;
+      padding: 0 20px 80px;
+      color: #111;
+      background: #fff;
+    }
+
+    h1 {
+      font-size: 1.6em;
+      font-weight: normal;
+      margin-bottom: 0.2em;
+    }
+
+    h3 {
+      font-size: 1em;
+      font-weight: normal;
+      font-style: italic;
+      margin-top: 1.4em;
+      margin-bottom: 0.2em;
+    }
+
+    h2 {
+      font-size: 1em;
+      font-weight: bold;
+      margin-top: 2em;
+      margin-bottom: 0.4em;
+      border-bottom: 1px solid #111;
+      padding-bottom: 0.2em;
+    }
+
+    p {
+      margin: 0.4em 0;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    ul li {
+      margin-bottom: 1.2em;
+    }
+
+    .event-name {
+      font-weight: bold;
+    }
+
+    a {
+      color: #111;
+    }
+
+    a:hover {
+      color: #555;
+    }
+
+    form {
+      margin-top: 0.6em;
+    }
+
+    label {
+      display: block;
+      margin-top: 1em;
+      margin-bottom: 0.2em;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    select,
+    textarea {
+      width: 100%;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1em;
+      border: 1px solid #aaa;
+      padding: 6px 8px;
+      box-sizing: border-box;
+      background: #fff;
+      color: #111;
+    }
+
+    textarea {
+      height: 80px;
+      resize: vertical;
+    }
+
+    button[type="submit"] {
+      margin-top: 1.2em;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1em;
+      background: none;
+      border: 1px solid #111;
+      padding: 6px 20px;
+      cursor: pointer;
+      color: #111;
+    }
+
+    button[type="submit"]:hover {
+      background: #111;
+      color: #fff;
+    }
+
+    .thank-you {
+      display: none;
+      margin-top: 0.8em;
+    }
+
+    /* Household RSVP section */
+    #household-section {
+      display: none;
+      margin-top: 1.4em;
+    }
+
+    .member-block {
+      margin-top: 1.4em;
+      padding-top: 1em;
+      border-top: 1px solid #ddd;
+    }
+
+    .member-block:first-child {
+      border-top: none;
+      padding-top: 0;
+    }
+
+    .member-name {
+      font-weight: bold;
+      margin-bottom: 0.6em;
+    }
+
+    .member-block label {
+      margin-top: 0.6em;
+    }
+
+    .not-found-msg {
+      display: none;
+      margin-top: 0.6em;
+      color: #888;
+      font-style: italic;
+    }
+
+    /* Custom autocomplete dropdown */
+    .autocomplete-wrapper {
+      position: relative;
+    }
+
+    #suggestions {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      border: 1px solid #aaa;
+      border-top: none;
+      background: #fff;
+      z-index: 100;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    #suggestions div {
+      padding: 6px 8px;
+      cursor: pointer;
+    }
+
+    #suggestions div:hover,
+    #suggestions div.active {
+      background: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+
+  <div style="float:right; margin-right:22%; margin-top:0.3em; font-size:4.5em; color:#cc0000; line-height:1;">&#10084;</div>
+  <h1>Cristina Ballarini &amp; Evan Behrle</h1>
+  <p>Saturday, May 2027 &mdash; New York City</p>
+
+  <h2>Events</h2>
+  <ul>
+    <li>
+      <p class="event-name">Welcome Party</p>
+      <p>Friday, May [TBD], 2027 &mdash; 8:00 pm</p>
+      <p>[Venue TBD], New York City</p>
+      <p>Dress: Cocktail&mdash;jackets, dresses.</p>
+    </li>
+    <li>
+      <p class="event-name">Ceremony &amp; Reception</p>
+      <p>Saturday, May [TBD], 2027 &mdash; 5:00 pm</p>
+      <p>[Venue TBD], New York City</p>
+      <p>Dress: Formal&mdash;suit and tie, long dresses.</p>
+    </li>
+  </ul>
+
+  <h2>RSVP</h2>
+  <p>Please RSVP by [date TBD].</p>
+
+  <form
+    action="https://formspree.io/f/YOUR_FORM_ID"
+    method="POST"
+    id="rsvp-form"
+  >
+    <label for="name-input">Your name</label>
+    <div class="autocomplete-wrapper">
+      <input
+        type="text"
+        id="name-input"
+        name="submitter_name"
+        autocomplete="new-password"
+        placeholder="Start typing your name&hellip;"
+        required
+      />
+      <div id="suggestions"></div>
+    </div>
+
+    <p class="not-found-msg" id="not-found-msg">
+      Name not found on guest list. Please check your spelling or contact us directly.
+    </p>
+
+    <!-- Populated dynamically once a household is matched -->
+    <div id="household-section"></div>
+
+    <div id="email-section" style="display:none;">
+      <label for="email-input">Email address</label>
+      <input type="email" id="email-input" name="email" />
+    </div>
+
+    <button type="submit" id="submit-btn" style="display:none;">Submit</button>
+  </form>
+
+  <p class="thank-you" id="thank-you">Thank you &mdash; we look forward to celebrating with you.</p>
+
+  <h2>Registry</h2>
+  <p>We don't have a registry. In lieu of gifts, you can contribute to the fundraiser we've organized with GiveDirectly.</p>
+
+  <h2>Things to do in NYC</h2>
 
   <h3>Food</h3>
   <ul>
