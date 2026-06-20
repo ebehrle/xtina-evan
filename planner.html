@@ -362,8 +362,10 @@
     // Suboption prices (null = TBD; 'reception_dependent' = computed from reception choice)
     const SUBOPTION_PRICES = {
       rehearsal: {
-        'LaRina':          11000,
-        'Long Island Bar': 'reception_dependent'
+        'Large buyout': {
+          'LaRina':          11000,
+          'Long Island Bar': 'reception_dependent'
+        }
       }
     };
 
@@ -373,11 +375,11 @@
       return sec[cardName];
     }
 
-    // Returns a number, null (TBD), or the string '$23,558 or $32,719' for the ambiguous case
-    function getSuboptionPrice(sectionId, suboptionName) {
-      const sec = SUBOPTION_PRICES[sectionId];
-      if (!sec || !(suboptionName in sec)) return null;
-      const val = sec[suboptionName];
+    // Returns a number, null (TBD), or 'reception_dependent' for the ambiguous case
+    function getSuboptionPrice(sectionId, cardName, suboptionName) {
+      const card = SUBOPTION_PRICES[sectionId] && SUBOPTION_PRICES[sectionId][cardName];
+      if (!card || !(suboptionName in card)) return null;
+      const val = card[suboptionName];
       if (val === 'reception_dependent') {
         const rec = state.reception ? state.reception.chosen[0] : null;
         if (rec === 'Borgo' || rec === 'Golden Unicorn') return 32719;
@@ -483,7 +485,7 @@
           // Card-level price
           const cardPrice = getCardPrice(sec.id, card);
           // Suboption price (only if suboption selected)
-          const subPrice = selectedSub ? getSuboptionPrice(sec.id, selectedSub) : null;
+          const subPrice = selectedSub ? getSuboptionPrice(sec.id, card, selectedSub) : null;
 
           // Determine what price to show and add to total
           // If there are suboptions available for this card, the price comes from the suboption
@@ -640,7 +642,7 @@
 
           const priceSpan = document.createElement('span');
           priceSpan.className = 'suboption-price';
-          const sp = getSuboptionPrice(sectionId, opt);
+          const sp = getSuboptionPrice(sectionId, text, opt);
           priceSpan.textContent = formatPrice(sp);
 
           lbl.appendChild(radio);
