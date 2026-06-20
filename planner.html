@@ -696,6 +696,17 @@
           delete state[fromSection].suboptions[cardText];
         }
 
+        // If dropping into chosen, move any existing chosen card back to options
+        if (toCol === 'chosen') {
+          state[toSection].chosen.forEach(existing => {
+            if (existing !== cardText) {
+              state[toSection].options.push(existing);
+              delete state[toSection].suboptions[existing];
+            }
+          });
+          state[toSection].chosen = [];
+        }
+
         if (!state[toSection][toCol].includes(cardText)) {
           state[toSection][toCol].push(cardText);
         }
