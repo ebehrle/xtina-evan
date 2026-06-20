@@ -529,6 +529,10 @@
       html += `<tr class="totals-divider totals-total">
         <td>Total</td>
         <td>$${total.toLocaleString()}</td>
+      </tr>
+      <tr class="totals-total">
+        <td>All-in (planning fee + all other costs)</td>
+        <td>$${(total + 48100).toLocaleString()}</td>
       </tr>`;
       html += '</table>';
       if (hasTbd) {
