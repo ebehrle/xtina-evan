@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wedding Planner</title>
+  <style>
+    body {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 15px;
+      line-height: 1.6;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 20px 80px;
+      color: #111;
+      background: #fff;
+    }
+
+    h1 {
+      font-size: 1.6em;
+      font-weight: normal;
+      margin-bottom: 0.2em;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 1.2em 0 2em;
+      flex-wrap: wrap;
+    }
+
+    .toolbar button {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1em;
+      background: none;
+      border: 1px solid #111;
+      padding: 4px 16px;
+      cursor: pointer;
+      color: #111;
+    }
+
+    .toolbar button:hover {
+      background: #111;
+      color: #fff;
+    }
+
+    .toolbar button:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    .toolbar button:disabled:hover {
+      background: none;
+      color: #111;
+    }
+
+    #status {
+      font-style: italic;
+      color: #888;
+      font-size: 0.95em;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 32px 24px;
+    }
+
+    .section {
+      border-top: 1px solid #111;
+      padding-top: 0.6em;
+    }
+
+    .section-title {
+      font-weight: bold;
+      font-size: 1em;
+      margin-bottom: 0.8em;
+    }
+
+    .columns {
+      display: flex;
+      gap: 12px;
+    }
+
+    .column {
+      flex: 1;
+      min-height: 80px;
+    }
+
+    .column-label {
+      font-size: 0.85em;
+      color: #888;
+      margin-bottom: 0.4em;
+      font-style: italic;
+    }
+
+    .drop-zone {
+      min-height: 60px;
+      padding: 6px;
+      border: 1px dashed #ccc;
+      background: #fafafa;
+    }
+
+    .drop-zone.drag-over {
+      background: #f0f0f0;
+      border-color: #999;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #aaa;
+      padding: 6px 10px;
+      margin-bottom: 6px;
+      cursor: grab;
+      font-size: 0.95em;
+      user-select: none;
+    }
+
+    .card:active {
+      cursor: grabbing;
+    }
+
+    .card.dragging {
+      opacity: 0.4;
+    }
+
+    /* Token setup screen */
+    #setup {
+      display: none;
+      margin-top: 2em;
+    }
+
+    #setup p {
+      margin-bottom: 0.8em;
+    }
+
+    #setup input {
+      width: 100%;
+      max-width: 480px;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1em;
+      border: 1px solid #aaa;
+      padding: 6px 8px;
+      box-sizing: border-box;
+    }
+
+    #setup button {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1em;
+      background: none;
+      border: 1px solid #111;
+      padding: 4px 16px;
+      cursor: pointer;
+      margin-top: 0.6em;
+    }
+
+    #setup button:hover {
+      background: #111;
+      color: #fff;
+    }
+
+    #main { display: none; }
+  </style>
+</head>
+<body>
+
+  <h1>Wedding Planner</h1>
+
+  <div id="setup">
+    <p>Enter your GitHub personal access token to get started. It will be saved in your browser and never stored in the code.</p>
+    <input type="password" id="token-input" placeholder="ghp_..." />
+    <br />
+    <button id="token-save">Connect</button>
+    <p id="token-error" style="color:#c00; display:none;">Could not connect. Check your token and try again.</p>
+  </div>
+
+  <div id="main">
+    <div class="toolbar">
+      <button id="save-btn">Save</button>
+      <button id="reset-token-btn" style="border-color:#aaa; color:#888;">Reset token</button>
+      <span id="status"></span>
+    </div>
+
+    <div class="board" id="board"></div>
+  </div>
+
+  <script>
+    const REPO  = 'ebehrle/xtina-evan';
+    const FILE  = 'planning-state.json';
+    const API   = `https://api.github.com/repos/${REPO}/contents/${FILE}`;
+
+    // Initial card definitions
+    const SECTIONS = [
+      {
+        id: 'rehearsal',
+        title: 'Rehearsal Dinner',
+        cards: ['None', 'Picnic', 'Small party reservation', 'Medium party reservation', 'Large buyout']
+      },
+      {
+        id: 'welcome',
+        title: 'Welcome Drinks',
+        cards: ['None', 'Pick a location', 'Reserve space', 'Reserve space + tab', 'Part of dinner restaurant buyout']
+      },
+      {
+        id: 'ceremony',
+        title: 'Ceremony',
+        cards: ['None', 'Courthouse', 'Park', 'Separate space', 'Reception space']
+      },
+      {
+        id: 'reception',
+        title: 'Reception',
+        cards: ['Boathouse', 'Borgo', 'Golden Unicorn']
+      },
+      {
+        id: 'afterparty',
+        title: 'Afterparty',
+        cards: ['[Options to be decided]']
+      }
+    ];
+
+    let token = localStorage.getItem('gh_token') || '';
+    let fileSha = null;
+
+    // ── State ──────────────────────────────────────────────────────────────────
+
+    // state: { sectionId: { options: [...], chosen: [...] } }
+    let state = {};
+
+    function initState() {
+      const s = {};
+      SECTIONS.forEach(sec => {
+        s[sec.id] = { options: [...sec.cards], chosen: [] };
+      });
+      return s;
+    }
+
+    function applyState(loaded) {
+      // Merge loaded state with current SECTIONS so new cards added to SECTIONS
+      // appear in options if not already in chosen or options.
+      SECTIONS.forEach(sec => {
+        if (!loaded[sec.id]) {
+          state[sec.id] = { options: [...sec.cards], chosen: [] };
+        } else {
+          state[sec.id] = loaded[sec.id];
+          // Add any new cards from SECTIONS that aren't already tracked
+          sec.cards.forEach(card => {
+            const inOptions = state[sec.id].options.includes(card);
+            const inChosen  = state[sec.id].chosen.includes(card);
+            if (!inOptions && !inChosen) state[sec.id].options.push(card);
+          });
+        }
+      });
+    }
+
+    // ── GitHub API ─────────────────────────────────────────────────────────────
+
+    async function loadFromGitHub() {
+      const res = await fetch(API, {
+        headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github+json' }
+      });
+      if (res.status === 404) {
+        state = initState();
+        return true;
+      }
+      if (!res.ok) return false;
+      const data = await res.json();
+      fileSha = data.sha;
+      const decoded = JSON.parse(atob(data.content));
+      state = initState();
+      applyState(decoded);
+      return true;
+    }
+
+    async function saveToGitHub() {
+      setStatus('Saving…');
+      document.getElementById('save-btn').disabled = true;
+      const content = btoa(unescape(encodeURIComponent(JSON.stringify(state, null, 2))));
+      const body = {
+        message: 'Update planning board',
+        content,
+        ...(fileSha ? { sha: fileSha } : {})
+      };
+      const res = await fetch(API, {
+        method: 'PUT',
+        headers: {
+          Authorization: `token ${token}`,
+          Accept: 'application/vnd.github+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+      document.getElementById('save-btn').disabled = false;
+      if (!res.ok) {
+        setStatus('Error saving. Try again.');
+        return;
+      }
+      const data = await res.json();
+      fileSha = data.content.sha;
+      setStatus('Saved.');
+      setTimeout(() => setStatus(''), 3000);
+    }
+
+    // ── Rendering ──────────────────────────────────────────────────────────────
+
+    function setStatus(msg) {
+      document.getElementById('status').textContent = msg;
+    }
+
+    function renderBoard() {
+      const board = document.getElementById('board');
+      board.innerHTML = '';
+      SECTIONS.forEach(sec => {
+        const secState = state[sec.id];
+        const div = document.createElement('div');
+        div.className = 'section';
+        div.innerHTML = `
+          <div class="section-title">${sec.title}</div>
+          <div class="columns">
+            <div class="column">
+              <div class="column-label">Options</div>
+              <div class="drop-zone" data-section="${sec.id}" data-col="options"></div>
+            </div>
+            <div class="column">
+              <div class="column-label">Chosen</div>
+              <div class="drop-zone" data-section="${sec.id}" data-col="chosen"></div>
+            </div>
+          </div>`;
+        board.appendChild(div);
+
+        ['options', 'chosen'].forEach(col => {
+          const zone = div.querySelector(`[data-col="${col}"]`);
+          secState[col].forEach(card => {
+            zone.appendChild(makeCard(card));
+          });
+          addDropZoneListeners(zone);
+        });
+      });
+    }
+
+    function makeCard(text) {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.textContent = text;
+      div.draggable = true;
+      div.addEventListener('dragstart', onDragStart);
+      div.addEventListener('dragend', onDragEnd);
+      return div;
+    }
+
+    // ── Drag & Drop ────────────────────────────────────────────────────────────
+
+    let dragging = null;
+
+    function onDragStart(e) {
+      dragging = e.target;
+      e.target.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', e.target.textContent);
+    }
+
+    function onDragEnd(e) {
+      e.target.classList.remove('dragging');
+      dragging = null;
+      document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('drag-over'));
+    }
+
+    function addDropZoneListeners(zone) {
+      zone.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        zone.classList.add('drag-over');
+      });
+      zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+      zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.classList.remove('drag-over');
+        if (!dragging) return;
+        const cardText = dragging.textContent;
+        const toSection = zone.dataset.section;
+        const toCol = zone.dataset.col;
+
+        // Find and remove from current location in state
+        SECTIONS.forEach(sec => {
+          ['options', 'chosen'].forEach(col => {
+            state[sec.id][col] = state[sec.id][col].filter(c => {
+              // Only remove from the section the card belongs to
+              if (sec.id === toSection || state[sec.id][col].includes(cardText)) {
+                return c !== cardText;
+              }
+              return true;
+            });
+          });
+        });
+
+        // Find which section this card belongs to
+        SECTIONS.forEach(sec => {
+          ['options', 'chosen'].forEach(col => {
+            // remove from everywhere in this section
+          });
+        });
+
+        // Simpler: track source zone from the dragged element
+        const fromZone = dragging.closest('.drop-zone');
+        const fromSection = fromZone.dataset.section;
+        const fromCol = fromZone.dataset.col;
+
+        state[fromSection][fromCol] = state[fromSection][fromCol].filter(c => c !== cardText);
+        if (!state[toSection][toCol].includes(cardText)) {
+          state[toSection][toCol].push(cardText);
+        }
+
+        renderBoard();
+      });
+    }
+
+    // ── Auth flow ──────────────────────────────────────────────────────────────
+
+    async function connect(t) {
+      token = t;
+      const ok = await loadFromGitHub();
+      if (!ok) return false;
+      localStorage.setItem('gh_token', token);
+      return true;
+    }
+
+    async function init() {
+      if (token) {
+        setStatus('Loading…');
+        document.getElementById('main').style.display = 'block';
+        const ok = await loadFromGitHub();
+        if (ok) {
+          renderBoard();
+          setStatus('');
+        } else {
+          token = '';
+          localStorage.removeItem('gh_token');
+          document.getElementById('main').style.display = 'none';
+          document.getElementById('setup').style.display = 'block';
+        }
+      } else {
+        document.getElementById('setup').style.display = 'block';
+      }
+    }
+
+    document.getElementById('token-save').addEventListener('click', async () => {
+      const t = document.getElementById('token-input').value.trim();
+      if (!t) return;
+      document.getElementById('token-error').style.display = 'none';
+      document.getElementById('token-save').disabled = true;
+      const ok = await connect(t);
+      document.getElementById('token-save').disabled = false;
+      if (ok) {
+        document.getElementById('setup').style.display = 'none';
+        document.getElementById('main').style.display = 'block';
+        renderBoard();
+      } else {
+        document.getElementById('token-error').style.display = 'block';
+      }
+    });
+
+    document.getElementById('save-btn').addEventListener('click', saveToGitHub);
+
+    document.getElementById('reset-token-btn').addEventListener('click', () => {
+      localStorage.removeItem('gh_token');
+      token = '';
+      document.getElementById('main').style.display = 'none';
+      document.getElementById('setup').style.display = 'block';
+    });
+
+    init();
+  </script>
+
+</body>
+</html>
