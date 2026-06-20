@@ -366,7 +366,10 @@
 
         ['options', 'chosen'].forEach(col => {
           const zone = div.querySelector(`[data-col="${col}"]`);
-          secState[col].forEach(card => {
+          const cards = col === 'options'
+            ? [...secState[col]].sort((a, b) => sec.cards.indexOf(a) - sec.cards.indexOf(b))
+            : secState[col];
+          cards.forEach(card => {
             const isChosen = col === 'chosen';
             const opts = isChosen && SUBOPTIONS[sec.id] && SUBOPTIONS[sec.id][card]
               ? SUBOPTIONS[sec.id][card] : null;
