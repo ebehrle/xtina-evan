@@ -417,8 +417,17 @@
       return '$' + p.toLocaleString();
     }
 
-    // Suboption image URLs: { sectionId: { cardName: { suboptionName: url } } }
-    const IMAGES = {};
+    // Images for chosen cards (no suboptions): { sectionId: { cardName: url } }
+    const CARD_IMAGES = {
+      reception: {
+        'Boathouse':      'Photos/boathouse.jpeg',
+        'Borgo':          'Photos/borgo.jpeg',
+        'Golden Unicorn': 'Photos/golden unicorn.jpeg'
+      }
+    };
+
+    // Images for selected suboptions: { sectionId: { cardName: { suboptionName: url } } }
+    const SUBOPTION_IMAGES = {};
 
     let token = localStorage.getItem('gh_token') || '';
     let fileSha = null;
@@ -501,12 +510,18 @@
         const secState = state[sec.id];
         const chosenCard = secState.chosen[0] || null;
         const selectedSub = chosenCard ? (secState.suboptions[chosenCard] || null) : null;
-        const url = selectedSub &&
-          IMAGES[sec.id] &&
-          IMAGES[sec.id][chosenCard] &&
-          IMAGES[sec.id][chosenCard][selectedSub];
+
+        // Prefer suboption image, fall back to card image
+        const url =
+          (selectedSub && SUBOPTION_IMAGES[sec.id] &&
+           SUBOPTION_IMAGES[sec.id][chosenCard] &&
+           SUBOPTION_IMAGES[sec.id][chosenCard][selectedSub]) ||
+          (!selectedSub && chosenCard && CARD_IMAGES[sec.id] &&
+           CARD_IMAGES[sec.id][chosenCard]);
+
         if (url) {
-          imgDiv.innerHTML = <img src="${url}" alt="${selectedSub}" />;
+          const alt = selectedSub || chosenCard;
+          imgDiv.innerHTML = <img src="${url}" alt="${alt}" />;
           imgDiv.style.display = 'block';
         } else {
           imgDiv.innerHTML = '';
