@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -125,6 +125,30 @@
       opacity: 0.4;
     }
 
+    .card-label {
+      user-select: none;
+    }
+
+    .suboptions {
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px solid #ddd;
+      cursor: default;
+    }
+
+    .suboptions label {
+      display: block;
+      font-size: 0.9em;
+      margin-bottom: 3px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .suboptions input[type="radio"] {
+      margin-right: 5px;
+      cursor: pointer;
+    }
+
     /* Token setup screen */
     #setup {
       display: none;
@@ -219,31 +243,47 @@
       }
     ];
 
+    // Suboptions shown as radio buttons when a card is in the Chosen column
+    const SUBOPTIONS = {
+      rehearsal: {
+        'Picnic':                      ['Prospect Park', 'Central Park'],
+        'Small party reservation':     ['Fausto', 'Long Island Bar', 'LaRina'],
+        'Medium party reservation':    ['Fausto', 'Long Island Bar', 'LaRina'],
+        'Large buyout':                ['Long Island Bar', 'LaRina']
+      },
+      welcome: {
+        'Pick a location':                  ['Doris', "Fong's"],
+        'Reserve space':                    ['Doris', "Fong's"],
+        'Reserve space + tab':              ['Doris', "Fong's"],
+        'Part of dinner restaurant buyout': ['Long Island Bar', 'LaRina']
+      },
+      ceremony: {
+        'Park':           ['Seward'],
+        'Separate space': ['Angel Orensatz', 'Museum at Eldridge Street']
+      }
+    };
+
     let token = localStorage.getItem('gh_token') || '';
     let fileSha = null;
 
-    // ── State ──────────────────────────────────────────────────────────────────
-
-    // state: { sectionId: { options: [...], chosen: [...] } }
+    // state: { sectionId: { options: [...], chosen: [...], suboptions: { cardName: selectedValue } } }
     let state = {};
 
     function initState() {
       const s = {};
       SECTIONS.forEach(sec => {
-        s[sec.id] = { options: [...sec.cards], chosen: [] };
+        s[sec.id] = { options: [...sec.cards], chosen: [], suboptions: {} };
       });
       return s;
     }
 
     function applyState(loaded) {
-      // Merge loaded state with current SECTIONS so new cards added to SECTIONS
-      // appear in options if not already in chosen or options.
       SECTIONS.forEach(sec => {
         if (!loaded[sec.id]) {
-          state[sec.id] = { options: [...sec.cards], chosen: [] };
+          state[sec.id] = { options: [...sec.cards], chosen: [], suboptions: {} };
         } else {
           state[sec.id] = loaded[sec.id];
-          // Add any new cards from SECTIONS that aren't already tracked
+          if (!state[sec.id].suboptions) state[sec.id].suboptions = {};
           sec.cards.forEach(card => {
             const inOptions = state[sec.id].options.includes(card);
             const inChosen  = state[sec.id].chosen.includes(card);
@@ -252,8 +292,6 @@
         }
       });
     }
-
-    // ── GitHub API ─────────────────────────────────────────────────────────────
 
     async function loadFromGitHub() {
       const res = await fetch(API, {
@@ -273,7 +311,7 @@
     }
 
     async function saveToGitHub() {
-      setStatus('Saving…');
+      setStatus('Saving...');
       document.getElementById('save-btn').disabled = true;
       const content = btoa(unescape(encodeURIComponent(JSON.stringify(state, null, 2))));
       const body = {
@@ -300,8 +338,6 @@
       setStatus('Saved.');
       setTimeout(() => setStatus(''), 3000);
     }
-
-    // ── Rendering ──────────────────────────────────────────────────────────────
 
     function setStatus(msg) {
       document.getElementById('status').textContent = msg;
@@ -331,36 +367,68 @@
         ['options', 'chosen'].forEach(col => {
           const zone = div.querySelector(`[data-col="${col}"]`);
           secState[col].forEach(card => {
-            zone.appendChild(makeCard(card));
+            const isChosen = col === 'chosen';
+            const opts = isChosen && SUBOPTIONS[sec.id] && SUBOPTIONS[sec.id][card]
+              ? SUBOPTIONS[sec.id][card] : null;
+            const selected = isChosen ? (secState.suboptions[card] || '') : '';
+            zone.appendChild(makeCard(card, sec.id, opts, selected));
           });
           addDropZoneListeners(zone);
         });
       });
     }
 
-    function makeCard(text) {
+    function makeCard(text, sectionId, suboptions, selectedSuboption) {
       const div = document.createElement('div');
       div.className = 'card';
-      div.textContent = text;
       div.draggable = true;
       div.addEventListener('dragstart', onDragStart);
       div.addEventListener('dragend', onDragEnd);
+
+      const label = document.createElement('div');
+      label.className = 'card-label';
+      label.textContent = text;
+      div.appendChild(label);
+
+      if (suboptions && suboptions.length > 0) {
+        const subDiv = document.createElement('div');
+        subDiv.className = 'suboptions';
+        subDiv.addEventListener('mousedown', e => e.stopPropagation());
+        suboptions.forEach(opt => {
+          const safeId = `sub_${sectionId}_${text}_${opt}`.replace(/[^a-zA-Z0-9]/g, '_');
+          const safeName = `sub_${sectionId}_${text}`.replace(/[^a-zA-Z0-9]/g, '_');
+          const lbl = document.createElement('label');
+          lbl.htmlFor = safeId;
+          const radio = document.createElement('input');
+          radio.type = 'radio';
+          radio.id = safeId;
+          radio.name = safeName;
+          radio.value = opt;
+          if (opt === selectedSuboption) radio.checked = true;
+          radio.addEventListener('change', () => {
+            state[sectionId].suboptions[text] = opt;
+          });
+          lbl.appendChild(radio);
+          lbl.appendChild(document.createTextNode(opt));
+          subDiv.appendChild(lbl);
+        });
+        div.appendChild(subDiv);
+      }
+
       return div;
     }
-
-    // ── Drag & Drop ────────────────────────────────────────────────────────────
 
     let dragging = null;
 
     function onDragStart(e) {
-      dragging = e.target;
-      e.target.classList.add('dragging');
+      dragging = e.currentTarget;
+      e.currentTarget.classList.add('dragging');
       e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', e.target.textContent);
+      e.dataTransfer.setData('text/plain', e.currentTarget.querySelector('.card-label').textContent);
     }
 
     function onDragEnd(e) {
-      e.target.classList.remove('dragging');
+      e.currentTarget.classList.remove('dragging');
       dragging = null;
       document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('drag-over'));
     }
@@ -376,36 +444,21 @@
         e.preventDefault();
         zone.classList.remove('drag-over');
         if (!dragging) return;
-        const cardText = dragging.textContent;
+        const cardText = dragging.querySelector('.card-label').textContent;
         const toSection = zone.dataset.section;
         const toCol = zone.dataset.col;
 
-        // Find and remove from current location in state
-        SECTIONS.forEach(sec => {
-          ['options', 'chosen'].forEach(col => {
-            state[sec.id][col] = state[sec.id][col].filter(c => {
-              // Only remove from the section the card belongs to
-              if (sec.id === toSection || state[sec.id][col].includes(cardText)) {
-                return c !== cardText;
-              }
-              return true;
-            });
-          });
-        });
-
-        // Find which section this card belongs to
-        SECTIONS.forEach(sec => {
-          ['options', 'chosen'].forEach(col => {
-            // remove from everywhere in this section
-          });
-        });
-
-        // Simpler: track source zone from the dragged element
         const fromZone = dragging.closest('.drop-zone');
         const fromSection = fromZone.dataset.section;
         const fromCol = fromZone.dataset.col;
 
         state[fromSection][fromCol] = state[fromSection][fromCol].filter(c => c !== cardText);
+
+        // Clear suboption when moving back to options
+        if (fromCol === 'chosen' && toCol !== 'chosen') {
+          delete state[fromSection].suboptions[cardText];
+        }
+
         if (!state[toSection][toCol].includes(cardText)) {
           state[toSection][toCol].push(cardText);
         }
@@ -413,8 +466,6 @@
         renderBoard();
       });
     }
-
-    // ── Auth flow ──────────────────────────────────────────────────────────────
 
     async function connect(t) {
       token = t;
@@ -426,7 +477,7 @@
 
     async function init() {
       if (token) {
-        setStatus('Loading…');
+        setStatus('Loading...');
         document.getElementById('main').style.display = 'block';
         const ok = await loadFromGitHub();
         if (ok) {
