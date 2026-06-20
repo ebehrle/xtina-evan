@@ -125,8 +125,22 @@
       opacity: 0.4;
     }
 
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+
     .card-label {
       user-select: none;
+    }
+
+    .card-price {
+      font-size: 0.85em;
+      color: #888;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .suboptions {
@@ -137,7 +151,9 @@
     }
 
     .suboptions label {
-      display: block;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
       font-size: 0.9em;
       margin-bottom: 3px;
       cursor: pointer;
@@ -147,6 +163,20 @@
     .suboptions input[type="radio"] {
       margin-right: 5px;
       cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .suboption-label-text {
+      display: flex;
+      align-items: baseline;
+      gap: 0;
+    }
+
+    .suboption-price {
+      font-size: 0.85em;
+      color: #888;
+      white-space: nowrap;
+      margin-left: 8px;
     }
 
     /* Token setup screen */
@@ -185,6 +215,63 @@
     }
 
     #main { display: none; }
+
+    /* Totals box */
+    #totals {
+      margin-top: 48px;
+      border-top: 1px solid #111;
+      padding-top: 0.8em;
+    }
+
+    #totals h2 {
+      font-size: 1em;
+      font-weight: bold;
+      margin: 0 0 0.8em;
+    }
+
+    .totals-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95em;
+    }
+
+    .totals-table td {
+      padding: 2px 0;
+      vertical-align: top;
+    }
+
+    .totals-table td:last-child {
+      text-align: right;
+      white-space: nowrap;
+      padding-left: 16px;
+    }
+
+    .totals-table .tbd {
+      color: #999;
+    }
+
+    .totals-divider td {
+      border-top: 1px solid #aaa;
+      padding-top: 6px;
+      padding-bottom: 0;
+    }
+
+    .totals-total td {
+      font-weight: bold;
+    }
+
+    .totals-note {
+      font-size: 0.85em;
+      color: #999;
+      font-style: italic;
+      margin-top: 0.6em;
+    }
+
+    .totals-empty {
+      color: #999;
+      font-style: italic;
+      font-size: 0.95em;
+    }
   </style>
 </head>
 <body>
@@ -207,6 +294,8 @@
     </div>
 
     <div class="board" id="board"></div>
+
+    <div id="totals"></div>
   </div>
 
   <script>
@@ -214,7 +303,6 @@
     const FILE  = 'planning-state.json';
     const API   = `https://api.github.com/repos/${REPO}/contents/${FILE}`;
 
-    // Initial card definitions
     const SECTIONS = [
       {
         id: 'rehearsal',
@@ -243,7 +331,6 @@
       }
     ];
 
-    // Suboptions shown as radio buttons when a card is in the Chosen column
     const SUBOPTIONS = {
       rehearsal: {
         'Picnic':                      ['Prospect Park', 'Central Park'],
@@ -263,10 +350,51 @@
       }
     };
 
+    // Card-level prices (null = TBD)
+    const CARD_PRICES = {
+      reception: {
+        'Borgo':          76938,
+        'Golden Unicorn': 36544,   // 24744 + 10800 + 1000
+        'Boathouse':      73426    // 6500 + 66926
+      }
+    };
+
+    // Suboption prices (null = TBD; 'reception_dependent' = computed from reception choice)
+    const SUBOPTION_PRICES = {
+      rehearsal: {
+        'LaRina':          11000,
+        'Long Island Bar': 'reception_dependent'
+      }
+    };
+
+    function getCardPrice(sectionId, cardName) {
+      const sec = CARD_PRICES[sectionId];
+      if (!sec || !(cardName in sec)) return null;
+      return sec[cardName];
+    }
+
+    // Returns a number, null (TBD), or the string '$23,558 or $32,719' for the ambiguous case
+    function getSuboptionPrice(sectionId, suboptionName) {
+      const sec = SUBOPTION_PRICES[sectionId];
+      if (!sec || !(suboptionName in sec)) return null;
+      const val = sec[suboptionName];
+      if (val === 'reception_dependent') {
+        const rec = state.reception ? state.reception.chosen[0] : null;
+        if (rec === 'Borgo' || rec === 'Golden Unicorn') return 32719;
+        if (rec === 'Boathouse') return 23558;
+        return 'reception_dependent'; // no reception chosen yet
+      }
+      return val;
+    }
+
+    function formatPrice(p) {
+      if (p === null) return 'TBD';
+      if (p === 'reception_dependent') return '$23,558 or $32,719';
+      return '$' + p.toLocaleString();
+    }
+
     let token = localStorage.getItem('gh_token') || '';
     let fileSha = null;
-
-    // state: { sectionId: { options: [...], chosen: [...], suboptions: { cardName: selectedValue } } }
     let state = {};
 
     function initState() {
@@ -297,10 +425,7 @@
       const res = await fetch(API, {
         headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github+json' }
       });
-      if (res.status === 404) {
-        state = initState();
-        return true;
-      }
+      if (res.status === 404) { state = initState(); return true; }
       if (!res.ok) return false;
       const data = await res.json();
       fileSha = data.sha;
@@ -329,10 +454,7 @@
         body: JSON.stringify(body)
       });
       document.getElementById('save-btn').disabled = false;
-      if (!res.ok) {
-        setStatus('Error saving. Try again.');
-        return;
-      }
+      if (!res.ok) { setStatus('Error saving. Try again.'); return; }
       const data = await res.json();
       fileSha = data.content.sha;
       setStatus('Saved.');
@@ -342,6 +464,81 @@
     function setStatus(msg) {
       document.getElementById('status').textContent = msg;
     }
+
+    // ── Totals ─────────────────────────────────────────────────────────────────
+
+    function renderTotals() {
+      const el = document.getElementById('totals');
+      const rows = [];
+      let total = 0;
+      let hasTbd = false;
+
+      SECTIONS.forEach(sec => {
+        const secState = state[sec.id];
+        if (!secState || secState.chosen.length === 0) return;
+
+        secState.chosen.forEach(card => {
+          const selectedSub = secState.suboptions[card] || null;
+
+          // Card-level price
+          const cardPrice = getCardPrice(sec.id, card);
+          // Suboption price (only if suboption selected)
+          const subPrice = selectedSub ? getSuboptionPrice(sec.id, selectedSub) : null;
+
+          // Determine what price to show and add to total
+          // If there are suboptions available for this card, the price comes from the suboption
+          const hasSuboptions = SUBOPTIONS[sec.id] && SUBOPTIONS[sec.id][card];
+
+          let displayLabel = sec.title + ': ' + card;
+          if (selectedSub) displayLabel += ' → ' + selectedSub;
+
+          let priceToShow = null;
+          if (hasSuboptions) {
+            // Price lives at suboption level
+            if (selectedSub) {
+              priceToShow = subPrice;
+              if (typeof priceToShow === 'number') total += priceToShow;
+              else hasTbd = true;
+            }
+            // no suboption chosen yet: no price contribution
+          } else {
+            // Price lives at card level
+            priceToShow = cardPrice;
+            if (typeof priceToShow === 'number') total += priceToShow;
+            else if (priceToShow === null && cardPrice === null) hasTbd = true;
+          }
+
+          if (priceToShow !== null || hasSuboptions) {
+            rows.push({ label: displayLabel, price: priceToShow, tbd: priceToShow === null || priceToShow === 'reception_dependent' });
+          }
+        });
+      });
+
+      if (rows.length === 0) {
+        el.innerHTML = '<div id="totals"><h2>Estimated total</h2><p class="totals-empty">No options chosen yet.</p></div>';
+        return;
+      }
+
+      let html = '<h2>Estimated total</h2><table class="totals-table">';
+      rows.forEach(row => {
+        html += `<tr class="${row.tbd ? 'tbd' : ''}">
+          <td>${row.label}</td>
+          <td>${row.price !== null ? formatPrice(row.price) : 'TBD'}</td>
+        </tr>`;
+      });
+      html += `<tr class="totals-divider totals-total">
+        <td>Total</td>
+        <td>$${total.toLocaleString()}</td>
+      </tr>`;
+      html += '</table>';
+      if (hasTbd) {
+        html += '<p class="totals-note">Items marked TBD are not included in the total.</p>';
+      }
+
+      el.innerHTML = html;
+    }
+
+    // ── Rendering ──────────────────────────────────────────────────────────────
 
     function renderBoard() {
       const board = document.getElementById('board');
@@ -379,6 +576,8 @@
           addDropZoneListeners(zone);
         });
       });
+
+      renderTotals();
     }
 
     function makeCard(text, sectionId, suboptions, selectedSuboption) {
@@ -388,20 +587,38 @@
       div.addEventListener('dragstart', onDragStart);
       div.addEventListener('dragend', onDragEnd);
 
+      // Card header: name + price
+      const header = document.createElement('div');
+      header.className = 'card-header';
+
       const label = document.createElement('div');
       label.className = 'card-label';
       label.textContent = text;
-      div.appendChild(label);
+      header.appendChild(label);
 
-      if (suboptions && suboptions.length > 0) {
+      // Show price at card level only if no suboptions (price lives at card level)
+      const hasSuboptions = suboptions && suboptions.length > 0;
+      if (!hasSuboptions) {
+        const cardPrice = getCardPrice(sectionId, text);
+        const priceEl = document.createElement('div');
+        priceEl.className = 'card-price';
+        priceEl.textContent = cardPrice !== null ? formatPrice(cardPrice) : 'TBD';
+        header.appendChild(priceEl);
+      }
+
+      div.appendChild(header);
+
+      if (hasSuboptions) {
         const subDiv = document.createElement('div');
         subDiv.className = 'suboptions';
         subDiv.addEventListener('mousedown', e => e.stopPropagation());
         suboptions.forEach(opt => {
-          const safeId = `sub_${sectionId}_${text}_${opt}`.replace(/[^a-zA-Z0-9]/g, '_');
+          const safeId   = `sub_${sectionId}_${text}_${opt}`.replace(/[^a-zA-Z0-9]/g, '_');
           const safeName = `sub_${sectionId}_${text}`.replace(/[^a-zA-Z0-9]/g, '_');
+
           const lbl = document.createElement('label');
           lbl.htmlFor = safeId;
+
           const radio = document.createElement('input');
           radio.type = 'radio';
           radio.id = safeId;
@@ -410,9 +627,20 @@
           if (opt === selectedSuboption) radio.checked = true;
           radio.addEventListener('change', () => {
             state[sectionId].suboptions[text] = opt;
+            renderTotals();
           });
+
+          const textSpan = document.createElement('span');
+          textSpan.textContent = opt;
+
+          const priceSpan = document.createElement('span');
+          priceSpan.className = 'suboption-price';
+          const sp = getSuboptionPrice(sectionId, opt);
+          priceSpan.textContent = formatPrice(sp);
+
           lbl.appendChild(radio);
-          lbl.appendChild(document.createTextNode(opt));
+          lbl.appendChild(textSpan);
+          lbl.appendChild(priceSpan);
           subDiv.appendChild(lbl);
         });
         div.appendChild(subDiv);
@@ -420,6 +648,8 @@
 
       return div;
     }
+
+    // ── Drag & Drop ────────────────────────────────────────────────────────────
 
     let dragging = null;
 
@@ -457,7 +687,6 @@
 
         state[fromSection][fromCol] = state[fromSection][fromCol].filter(c => c !== cardText);
 
-        // Clear suboption when moving back to options
         if (fromCol === 'chosen' && toCol !== 'chosen') {
           delete state[fromSection].suboptions[cardText];
         }
@@ -469,6 +698,8 @@
         renderBoard();
       });
     }
+
+    // ── Auth flow ──────────────────────────────────────────────────────────────
 
     async function connect(t) {
       token = t;
