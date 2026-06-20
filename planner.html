@@ -15,275 +15,49 @@
       color: #111;
       background: #fff;
     }
-
-    h1 {
-      font-size: 1.6em;
-      font-weight: normal;
-      margin-bottom: 0.2em;
-    }
-
-    .toolbar {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin: 1.2em 0 2em;
-      flex-wrap: wrap;
-    }
-
-    .toolbar button {
-      font-family: "Times New Roman", Times, serif;
-      font-size: 1em;
-      background: none;
-      border: 1px solid #111;
-      padding: 4px 16px;
-      cursor: pointer;
-      color: #111;
-    }
-
-    .toolbar button:hover {
-      background: #111;
-      color: #fff;
-    }
-
-    .toolbar button:disabled {
-      opacity: 0.4;
-      cursor: default;
-    }
-
-    .toolbar button:disabled:hover {
-      background: none;
-      color: #111;
-    }
-
-    #status {
-      font-style: italic;
-      color: #888;
-      font-size: 0.95em;
-    }
-
-    .board {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 32px 24px;
-    }
-
-    .section {
-      border-top: 1px solid #111;
-      padding-top: 0.6em;
-    }
-
-    .section-title {
-      font-weight: bold;
-      font-size: 1em;
-      margin-bottom: 0.8em;
-    }
-
-    .columns {
-      display: flex;
-      gap: 12px;
-    }
-
-    .column {
-      flex: 1;
-      min-height: 80px;
-    }
-
-    .column-label {
-      font-size: 0.85em;
-      color: #888;
-      margin-bottom: 0.4em;
-      font-style: italic;
-    }
-
-    .drop-zone {
-      min-height: 60px;
-      padding: 6px;
-      border: 1px dashed #ccc;
-      background: #fafafa;
-    }
-
-    .drop-zone.drag-over {
-      background: #f0f0f0;
-      border-color: #999;
-    }
-
-    .card {
-      background: #fff;
-      border: 1px solid #aaa;
-      padding: 6px 10px;
-      margin-bottom: 6px;
-      cursor: grab;
-      font-size: 0.95em;
-      user-select: none;
-    }
-
-    .card:active {
-      cursor: grabbing;
-    }
-
-    .card.dragging {
-      opacity: 0.4;
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-    }
-
-    .card-label {
-      user-select: none;
-    }
-
-    .card-price {
-      font-size: 0.85em;
-      color: #888;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .suboptions {
-      margin-top: 6px;
-      padding-top: 6px;
-      border-top: 1px solid #ddd;
-      cursor: default;
-    }
-
-    .suboptions label {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      font-size: 0.9em;
-      margin-bottom: 3px;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .suboptions input[type="radio"] {
-      margin-right: 5px;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .suboption-label-text {
-      display: flex;
-      align-items: baseline;
-      gap: 0;
-    }
-
-    .suboption-price {
-      font-size: 0.85em;
-      color: #888;
-      white-space: nowrap;
-      margin-left: 8px;
-    }
-
-    /* Token setup screen */
-    #setup {
-      display: none;
-      margin-top: 2em;
-    }
-
-    #setup p {
-      margin-bottom: 0.8em;
-    }
-
-    #setup input {
-      width: 100%;
-      max-width: 480px;
-      font-family: "Times New Roman", Times, serif;
-      font-size: 1em;
-      border: 1px solid #aaa;
-      padding: 6px 8px;
-      box-sizing: border-box;
-    }
-
-    #setup button {
-      font-family: "Times New Roman", Times, serif;
-      font-size: 1em;
-      background: none;
-      border: 1px solid #111;
-      padding: 4px 16px;
-      cursor: pointer;
-      margin-top: 0.6em;
-    }
-
-    #setup button:hover {
-      background: #111;
-      color: #fff;
-    }
-
+    h1 { font-size: 1.6em; font-weight: normal; margin-bottom: 0.2em; }
+    .toolbar { display: flex; align-items: center; gap: 16px; margin: 1.2em 0 2em; flex-wrap: wrap; }
+    .toolbar button { font-family: "Times New Roman", Times, serif; font-size: 1em; background: none; border: 1px solid #111; padding: 4px 16px; cursor: pointer; color: #111; }
+    .toolbar button:hover { background: #111; color: #fff; }
+    .toolbar button:disabled { opacity: 0.4; cursor: default; }
+    .toolbar button:disabled:hover { background: none; color: #111; }
+    #status { font-style: italic; color: #888; font-size: 0.95em; }
+    .board { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px 24px; }
+    .section { border-top: 1px solid #111; padding-top: 0.6em; }
+    .section-title { font-weight: bold; font-size: 1em; margin-bottom: 0.8em; }
+    .columns { display: flex; gap: 12px; }
+    .column { flex: 1; min-height: 80px; }
+    .column-label { font-size: 0.85em; color: #888; margin-bottom: 0.4em; font-style: italic; }
+    .drop-zone { min-height: 60px; padding: 6px; border: 1px dashed #ccc; background: #fafafa; }
+    .drop-zone.drag-over { background: #f0f0f0; border-color: #999; }
+    .card { background: #fff; border: 1px solid #aaa; padding: 6px 10px; margin-bottom: 6px; cursor: grab; font-size: 0.95em; user-select: none; }
+    .card:active { cursor: grabbing; }
+    .card.dragging { opacity: 0.4; }
+    .card-header { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+    .card-label { user-select: none; }
+    .card-price { font-size: 0.85em; color: #888; white-space: nowrap; flex-shrink: 0; }
+    .suboptions { margin-top: 6px; padding-top: 6px; border-top: 1px solid #ddd; cursor: default; }
+    .suboptions label { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.9em; margin-bottom: 3px; cursor: pointer; user-select: none; }
+    .suboptions input[type="radio"] { margin-right: 5px; cursor: pointer; flex-shrink: 0; }
+    .suboption-price { font-size: 0.85em; color: #888; white-space: nowrap; margin-left: 8px; }
+    .section-image { display: none; margin-top: 12px; text-align: center; }
+    .section-image img { max-width: 100%; max-height: 220px; object-fit: contain; }
+    #setup { display: none; margin-top: 2em; }
+    #setup p { margin-bottom: 0.8em; }
+    #setup input { width: 100%; max-width: 480px; font-family: "Times New Roman", Times, serif; font-size: 1em; border: 1px solid #aaa; padding: 6px 8px; box-sizing: border-box; }
+    #setup button { font-family: "Times New Roman", Times, serif; font-size: 1em; background: none; border: 1px solid #111; padding: 4px 16px; cursor: pointer; margin-top: 0.6em; }
+    #setup button:hover { background: #111; color: #fff; }
     #main { display: none; }
-
-    .section-image {
-      display: none;
-      margin-top: 12px;
-      text-align: center;
-    }
-
-    .section-image img {
-      max-width: 100%;
-      max-height: 220px;
-      object-fit: contain;
-    }
-
-    /* Totals box */
-    #totals {
-      margin-top: 48px;
-      border-top: 1px solid #111;
-      padding-top: 0.8em;
-    }
-
-    #totals h2 {
-      font-size: 1em;
-      font-weight: bold;
-      margin: 0 0 0.8em;
-    }
-
-    .totals-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.95em;
-    }
-
-    .totals-table td {
-      padding: 2px 0;
-      vertical-align: top;
-    }
-
-    .totals-table td:last-child {
-      text-align: right;
-      white-space: nowrap;
-      padding-left: 16px;
-    }
-
-    .totals-table .tbd {
-      color: #999;
-    }
-
-    .totals-divider td {
-      border-top: 1px solid #aaa;
-      padding-top: 6px;
-      padding-bottom: 0;
-    }
-
-    .totals-total td {
-      font-weight: bold;
-    }
-
-    .totals-note {
-      font-size: 0.85em;
-      color: #999;
-      font-style: italic;
-      margin-top: 0.6em;
-    }
-
-    .totals-empty {
-      color: #999;
-      font-style: italic;
-      font-size: 0.95em;
-    }
+    #totals { margin-top: 48px; border-top: 1px solid #111; padding-top: 0.8em; }
+    #totals h2 { font-size: 1em; font-weight: bold; margin: 0 0 0.8em; }
+    .totals-table { width: 100%; border-collapse: collapse; font-size: 0.95em; }
+    .totals-table td { padding: 2px 0; vertical-align: top; }
+    .totals-table td:last-child { text-align: right; white-space: nowrap; padding-left: 16px; }
+    .totals-table .tbd { color: #999; }
+    .totals-divider td { border-top: 1px solid #aaa; padding-top: 6px; padding-bottom: 0; }
+    .totals-total td { font-weight: bold; }
+    .totals-note { font-size: 0.85em; color: #999; font-style: italic; margin-top: 0.6em; }
+    .totals-empty { color: #999; font-style: italic; font-size: 0.95em; }
   </style>
 </head>
 <body>
@@ -304,43 +78,26 @@
       <button id="reset-token-btn" style="border-color:#aaa; color:#888;">Reset token</button>
       <span id="status"></span>
     </div>
-
     <div class="board" id="board"></div>
-
     <div id="totals"></div>
   </div>
 
   <script>
-    const REPO  = 'ebehrle/xtina-evan';
-    const FILE  = 'planning-state.json';
-    const API   = `https://api.github.com/repos/${REPO}/contents/${FILE}`;
+    const REPO = 'ebehrle/xtina-evan';
+    const FILE = 'planning-state.json';
+    const API  = `https://api.github.com/repos/${REPO}/contents/${FILE}`;
 
     const SECTIONS = [
-      {
-        id: 'rehearsal',
-        title: 'Rehearsal Dinner',
-        cards: ['None', 'Picnic', 'Small party reservation', 'Medium party reservation', 'Large buyout']
-      },
-      {
-        id: 'welcome',
-        title: 'Welcome Drinks',
-        cards: ['None', 'Pick a location', 'Reserve space', 'Reserve space + tab', 'Part of dinner restaurant buyout']
-      },
-      {
-        id: 'ceremony',
-        title: 'Ceremony',
-        cards: ['None', 'Courthouse', 'Park', 'Separate space', 'Reception space']
-      },
-      {
-        id: 'reception',
-        title: 'Reception',
-        cards: ['Boathouse', 'Borgo', 'Golden Unicorn']
-      },
-      {
-        id: 'afterparty',
-        title: 'Afterparty',
-        cards: ['[Options to be decided]']
-      }
+      { id: 'rehearsal', title: 'Rehearsal Dinner',
+        cards: ['None', 'Picnic', 'Small party reservation', 'Medium party reservation', 'Large buyout'] },
+      { id: 'welcome', title: 'Welcome Drinks',
+        cards: ['None', 'Pick a location', 'Reserve space', 'Reserve space + tab', 'Part of dinner restaurant buyout'] },
+      { id: 'ceremony', title: 'Ceremony',
+        cards: ['None', 'Courthouse', 'Park', 'Separate space', 'Reception space'] },
+      { id: 'reception', title: 'Reception',
+        cards: ['Boathouse', 'Borgo', 'Golden Unicorn'] },
+      { id: 'afterparty', title: 'Afterparty',
+        cards: ['[Options to be decided]'] }
     ];
 
     const SUBOPTIONS = {
@@ -362,16 +119,14 @@
       }
     };
 
-    // Card-level prices (null = TBD)
     const CARD_PRICES = {
       reception: {
         'Borgo':          76938,
-        'Golden Unicorn': 36544,   // 24744 + 10800 + 1000
-        'Boathouse':      73426    // 6500 + 66926
+        'Golden Unicorn': 36544,
+        'Boathouse':      73426
       }
     };
 
-    // Suboption prices (null = TBD; 'reception_dependent' = computed from reception choice)
     const SUBOPTION_PRICES = {
       rehearsal: {
         'Small party reservation': {
@@ -391,33 +146,7 @@
       }
     };
 
-    function getCardPrice(sectionId, cardName) {
-      const sec = CARD_PRICES[sectionId];
-      if (!sec || !(cardName in sec)) return null;
-      return sec[cardName];
-    }
-
-    // Returns a number, null (TBD), or 'reception_dependent' for the ambiguous case
-    function getSuboptionPrice(sectionId, cardName, suboptionName) {
-      const card = SUBOPTION_PRICES[sectionId] && SUBOPTION_PRICES[sectionId][cardName];
-      if (!card || !(suboptionName in card)) return null;
-      const val = card[suboptionName];
-      if (val === 'reception_dependent') {
-        const rec = state.reception ? state.reception.chosen[0] : null;
-        if (rec === 'Borgo' || rec === 'Golden Unicorn') return 32719;
-        if (rec === 'Boathouse') return 23558;
-        return 'reception_dependent'; // no reception chosen yet
-      }
-      return val;
-    }
-
-    function formatPrice(p) {
-      if (p === null) return 'TBD';
-      if (p === 'reception_dependent') return '$23,558 or $32,719';
-      return '$' + p.toLocaleString();
-    }
-
-    // Images for chosen cards (no suboptions): { sectionId: { cardName: url } }
+    // Images for chosen cards without suboptions: { sectionId: { cardName: url } }
     const CARD_IMAGES = {
       reception: {
         'Boathouse':      'Photos/boathouse.jpeg',
@@ -428,6 +157,31 @@
 
     // Images for selected suboptions: { sectionId: { cardName: { suboptionName: url } } }
     const SUBOPTION_IMAGES = {};
+
+    function getCardPrice(sectionId, cardName) {
+      const sec = CARD_PRICES[sectionId];
+      if (!sec || !(cardName in sec)) return null;
+      return sec[cardName];
+    }
+
+    function getSuboptionPrice(sectionId, cardName, suboptionName) {
+      const card = SUBOPTION_PRICES[sectionId] && SUBOPTION_PRICES[sectionId][cardName];
+      if (!card || !(suboptionName in card)) return null;
+      const val = card[suboptionName];
+      if (val === 'reception_dependent') {
+        const rec = state.reception ? state.reception.chosen[0] : null;
+        if (rec === 'Borgo' || rec === 'Golden Unicorn') return 32719;
+        if (rec === 'Boathouse') return 23558;
+        return 'reception_dependent';
+      }
+      return val;
+    }
+
+    function formatPrice(p) {
+      if (p === null) return 'TBD';
+      if (p === 'reception_dependent') return '$23,558 or $32,719';
+      return '$' + p.toLocaleString();
+    }
 
     let token = localStorage.getItem('gh_token') || '';
     let fileSha = null;
@@ -475,18 +229,10 @@
       setStatus('Saving...');
       document.getElementById('save-btn').disabled = true;
       const content = btoa(unescape(encodeURIComponent(JSON.stringify(state, null, 2))));
-      const body = {
-        message: 'Update planning board',
-        content,
-        ...(fileSha ? { sha: fileSha } : {})
-      };
+      const body = { message: 'Update planning board', content, ...(fileSha ? { sha: fileSha } : {}) };
       const res = await fetch(API, {
         method: 'PUT',
-        headers: {
-          Authorization: `token ${token}`,
-          Accept: 'application/vnd.github+json',
-          'Content-Type': 'application/json'
-        },
+        headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
       });
       document.getElementById('save-btn').disabled = false;
@@ -501,27 +247,28 @@
       document.getElementById('status').textContent = msg;
     }
 
-    // ── Totals ─────────────────────────────────────────────────────────────────
+    // ── Images ─────────────────────────────────────────────────────────────────
 
     function updateSectionImages() {
       SECTIONS.forEach(sec => {
-        const imgDiv = document.querySelector([data-section-img="${sec.id}"]);
+        const imgDiv = document.querySelector(`[data-section-img="${sec.id}"]`);
         if (!imgDiv) return;
         const secState = state[sec.id];
         const chosenCard = secState.chosen[0] || null;
         const selectedSub = chosenCard ? (secState.suboptions[chosenCard] || null) : null;
 
-        // Prefer suboption image, fall back to card image
         const url =
-          (selectedSub && SUBOPTION_IMAGES[sec.id] &&
+          (selectedSub &&
+           SUBOPTION_IMAGES[sec.id] &&
            SUBOPTION_IMAGES[sec.id][chosenCard] &&
            SUBOPTION_IMAGES[sec.id][chosenCard][selectedSub]) ||
-          (!selectedSub && chosenCard && CARD_IMAGES[sec.id] &&
+          (!selectedSub && chosenCard &&
+           CARD_IMAGES[sec.id] &&
            CARD_IMAGES[sec.id][chosenCard]);
 
         if (url) {
           const alt = selectedSub || chosenCard;
-          imgDiv.innerHTML = <img src="${url}" alt="${alt}" />;
+          imgDiv.innerHTML = `<img src="${url}" alt="${alt}" />`;
           imgDiv.style.display = 'block';
         } else {
           imgDiv.innerHTML = '';
@@ -529,6 +276,8 @@
         }
       });
     }
+
+    // ── Totals ─────────────────────────────────────────────────────────────────
 
     function renderTotals() {
       const el = document.getElementById('totals');
@@ -539,17 +288,10 @@
       SECTIONS.forEach(sec => {
         const secState = state[sec.id];
         if (!secState || secState.chosen.length === 0) return;
-
         secState.chosen.forEach(card => {
           const selectedSub = secState.suboptions[card] || null;
-
-          // Card-level price
           const cardPrice = getCardPrice(sec.id, card);
-          // Suboption price (only if suboption selected)
-          const subPrice = selectedSub ? getSuboptionPrice(sec.id, card, selectedSub) : null;
-
-          // Determine what price to show and add to total
-          // If there are suboptions available for this card, the price comes from the suboption
+          const subPrice  = selectedSub ? getSuboptionPrice(sec.id, card, selectedSub) : null;
           const hasSuboptions = SUBOPTIONS[sec.id] && SUBOPTIONS[sec.id][card];
 
           let displayLabel = sec.title + ': ' + card;
@@ -557,18 +299,15 @@
 
           let priceToShow = null;
           if (hasSuboptions) {
-            // Price lives at suboption level
             if (selectedSub) {
               priceToShow = subPrice;
               if (typeof priceToShow === 'number') total += priceToShow;
               else hasTbd = true;
             }
-            // no suboption chosen yet: no price contribution
           } else {
-            // Price lives at card level
             priceToShow = cardPrice;
             if (typeof priceToShow === 'number') total += priceToShow;
-            else if (priceToShow === null && cardPrice === null) hasTbd = true;
+            else if (priceToShow === null) hasTbd = true;
           }
 
           if (priceToShow !== null || hasSuboptions) {
@@ -578,30 +317,18 @@
       });
 
       if (rows.length === 0) {
-        el.innerHTML = '<div id="totals"><h2>Estimated total</h2><p class="totals-empty">No options chosen yet.</p></div>';
+        el.innerHTML = '<h2>Estimated total</h2><p class="totals-empty">No options chosen yet.</p>';
         return;
       }
 
       let html = '<h2>Estimated total</h2><table class="totals-table">';
       rows.forEach(row => {
-        html += `<tr class="${row.tbd ? 'tbd' : ''}">
-          <td>${row.label}</td>
-          <td>${row.price !== null ? formatPrice(row.price) : 'TBD'}</td>
-        </tr>`;
+        html += `<tr class="${row.tbd ? 'tbd' : ''}"><td>${row.label}</td><td>${row.price !== null ? formatPrice(row.price) : 'TBD'}</td></tr>`;
       });
-      html += `<tr class="totals-divider totals-total">
-        <td>Total</td>
-        <td>$${total.toLocaleString()}</td>
-      </tr>
-      <tr class="totals-total">
-        <td>All-in (planning fee + all other costs)</td>
-        <td>$${(total + 48100).toLocaleString()}</td>
-      </tr>`;
+      html += `<tr class="totals-divider totals-total"><td>Total</td><td>$${total.toLocaleString()}</td></tr>`;
+      html += `<tr class="totals-total"><td>All-in (planning fee + all other costs)</td><td>$${(total + 48100).toLocaleString()}</td></tr>`;
       html += '</table>';
-      if (hasTbd) {
-        html += '<p class="totals-note">Items marked TBD are not included in the total.</p>';
-      }
-
+      if (hasTbd) html += '<p class="totals-note">Items marked TBD are not included in the total.</p>';
       el.innerHTML = html;
     }
 
@@ -625,7 +352,8 @@
               <div class="column-label">Chosen</div>
               <div class="drop-zone" data-section="${sec.id}" data-col="chosen"></div>
             </div>
-          </div>`;
+          </div>
+          <div class="section-image" data-section-img="${sec.id}"></div>`;
         board.appendChild(div);
 
         ['options', 'chosen'].forEach(col => {
@@ -655,7 +383,6 @@
       div.addEventListener('dragstart', onDragStart);
       div.addEventListener('dragend', onDragEnd);
 
-      // Card header: name + price
       const header = document.createElement('div');
       header.className = 'card-header';
 
@@ -664,8 +391,6 @@
       label.textContent = text;
       header.appendChild(label);
 
-      // Show price at card level only if the card has no suboptions at all (price lives at suboption level otherwise)
-      const hasSuboptions = suboptions && suboptions.length > 0;
       const hasSuboptionsDefined = !!(SUBOPTIONS[sectionId] && SUBOPTIONS[sectionId][text]);
       if (!hasSuboptionsDefined) {
         const cardPrice = (text === 'None' || text === 'Reception space') ? 0 : getCardPrice(sectionId, text);
@@ -674,9 +399,9 @@
         priceEl.textContent = cardPrice !== null ? formatPrice(cardPrice) : 'TBD';
         header.appendChild(priceEl);
       }
-
       div.appendChild(header);
 
+      const hasSuboptions = suboptions && suboptions.length > 0;
       if (hasSuboptions) {
         const subDiv = document.createElement('div');
         subDiv.className = 'suboptions';
@@ -684,10 +409,8 @@
         suboptions.forEach(opt => {
           const safeId   = `sub_${sectionId}_${text}_${opt}`.replace(/[^a-zA-Z0-9]/g, '_');
           const safeName = `sub_${sectionId}_${text}`.replace(/[^a-zA-Z0-9]/g, '_');
-
           const lbl = document.createElement('label');
           lbl.htmlFor = safeId;
-
           const radio = document.createElement('input');
           radio.type = 'radio';
           radio.id = safeId;
@@ -699,15 +422,11 @@
             renderTotals();
             updateSectionImages();
           });
-
           const textSpan = document.createElement('span');
           textSpan.textContent = opt;
-
           const priceSpan = document.createElement('span');
           priceSpan.className = 'suboption-price';
-          const sp = getSuboptionPrice(sectionId, text, opt);
-          priceSpan.textContent = formatPrice(sp);
-
+          priceSpan.textContent = formatPrice(getSuboptionPrice(sectionId, text, opt));
           lbl.appendChild(radio);
           lbl.appendChild(textSpan);
           lbl.appendChild(priceSpan);
@@ -750,18 +469,14 @@
         const cardText = dragging.querySelector('.card-label').textContent;
         const toSection = zone.dataset.section;
         const toCol = zone.dataset.col;
-
         const fromZone = dragging.closest('.drop-zone');
         const fromSection = fromZone.dataset.section;
         const fromCol = fromZone.dataset.col;
 
         state[fromSection][fromCol] = state[fromSection][fromCol].filter(c => c !== cardText);
-
         if (fromCol === 'chosen' && toCol !== 'chosen') {
           delete state[fromSection].suboptions[cardText];
         }
-
-        // If dropping into chosen, move any existing chosen card back to options
         if (toCol === 'chosen') {
           state[toSection].chosen.forEach(existing => {
             if (existing !== cardText) {
@@ -771,16 +486,14 @@
           });
           state[toSection].chosen = [];
         }
-
         if (!state[toSection][toCol].includes(cardText)) {
           state[toSection][toCol].push(cardText);
         }
-
         renderBoard();
       });
     }
 
-    // ── Auth flow ──────────────────────────────────────────────────────────────
+    // ── Auth ───────────────────────────────────────────────────────────────────
 
     async function connect(t) {
       token = t;
@@ -795,10 +508,8 @@
         setStatus('Loading...');
         document.getElementById('main').style.display = 'block';
         const ok = await loadFromGitHub();
-        if (ok) {
-          renderBoard();
-          setStatus('');
-        } else {
+        if (ok) { renderBoard(); setStatus(''); }
+        else {
           token = '';
           localStorage.removeItem('gh_token');
           document.getElementById('main').style.display = 'none';
