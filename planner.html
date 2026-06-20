@@ -600,9 +600,10 @@
       label.textContent = text;
       header.appendChild(label);
 
-      // Show price at card level only if no suboptions (price lives at card level)
+      // Show price at card level only if the card has no suboptions at all (price lives at suboption level otherwise)
       const hasSuboptions = suboptions && suboptions.length > 0;
-      if (!hasSuboptions) {
+      const hasSuboptionsDefined = !!(SUBOPTIONS[sectionId] && SUBOPTIONS[sectionId][text]);
+      if (!hasSuboptionsDefined) {
         const cardPrice = getCardPrice(sectionId, text);
         const priceEl = document.createElement('div');
         priceEl.className = 'card-price';
