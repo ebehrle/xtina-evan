@@ -604,7 +604,7 @@
       const hasSuboptions = suboptions && suboptions.length > 0;
       const hasSuboptionsDefined = !!(SUBOPTIONS[sectionId] && SUBOPTIONS[sectionId][text]);
       if (!hasSuboptionsDefined) {
-        const cardPrice = getCardPrice(sectionId, text);
+        const cardPrice = text === 'None' ? 0 : getCardPrice(sectionId, text);
         const priceEl = document.createElement('div');
         priceEl.className = 'card-price';
         priceEl.textContent = cardPrice !== null ? formatPrice(cardPrice) : 'TBD';
