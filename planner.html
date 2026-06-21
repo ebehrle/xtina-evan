@@ -292,8 +292,8 @@
 
         if (urls && urls.length) {
           const alt = selectedSub || chosenCard;
-          imgDiv.innerHTML = `<img src="${url}" alt="${alt}" />`;
-          imgDiv.style.display = 'block';
+          imgDiv.innerHTML = urls.map(function(u) { return '<img src="' + u + '" alt="' + alt + '" />'; }).join('');
+          imgDiv.style.display = 'flex';
         } else {
           imgDiv.innerHTML = '';
           imgDiv.style.display = 'none';
