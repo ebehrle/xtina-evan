@@ -290,7 +290,7 @@
            CARD_IMAGES[sec.id] &&
            CARD_IMAGES[sec.id][chosenCard]) || null;
 
-        if (url) {
+        if (urls && urls.length) {
           const alt = selectedSub || chosenCard;
           imgDiv.innerHTML = `<img src="${url}" alt="${alt}" />`;
           imgDiv.style.display = 'block';
