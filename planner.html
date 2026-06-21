@@ -40,8 +40,8 @@
     .suboptions label { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.9em; margin-bottom: 3px; cursor: pointer; user-select: none; }
     .suboptions input[type="radio"] { margin-right: 5px; cursor: pointer; flex-shrink: 0; }
     .suboption-price { font-size: 0.85em; color: #888; white-space: nowrap; margin-left: 8px; }
-    .section-image { display: none; margin-top: 12px; text-align: center; }
-    .section-image img { max-width: 100%; max-height: 220px; object-fit: contain; }
+    .section-image { display: none; margin-top: 12px; text-align: center; gap: 8px; justify-content: center; }
+    .section-image img { max-width: 100%; max-height: 220px; object-fit: contain; flex: 1; min-width: 0; }
     #setup { display: none; margin-top: 2em; }
     #setup p { margin-bottom: 0.8em; }
     #setup input { width: 100%; max-width: 480px; font-family: "Times New Roman", Times, serif; font-size: 1em; border: 1px solid #aaa; padding: 6px 8px; box-sizing: border-box; }
@@ -149,9 +149,9 @@
     // Images for chosen cards without suboptions: { sectionId: { cardName: url } }
     const CARD_IMAGES = {
       reception: {
-        'Boathouse':      'Photos/boathouse.jpeg',
-        'Borgo':          'Photos/borgo.jpeg',
-        'Golden Unicorn': 'Photos/golden unicorn.jpeg'
+        'Boathouse':      ['Photos/boathouse.jpeg'],
+        'Borgo':          ['Photos/borgo.jpeg'],
+        'Golden Unicorn': ['Photos/golden unicorn.jpeg']
       }
     };
 
@@ -159,25 +159,25 @@
     const SUBOPTION_IMAGES = {
       welcome: {
         'Pick a location': {
-          'Doris':             'Photos/doris.jpeg',
-          "Fong's":            'Photos/fongs.jpg',
-          'The Gate':          'Photos/gate.avif',
-          'Washington Commons':'Photos/washington commons.jpg',
-          'Anable Basin':      'Photos/anable basin.jpg'
+          'Doris':             ['Photos/doris.jpeg', 'Photos/doris 2.jpeg'],
+          "Fong's":            ['Photos/fongs.jpg'],
+          'The Gate':          ['Photos/gate.avif', 'Photos/gate 2.jpg'],
+          'Washington Commons':['Photos/washington commons.jpg'],
+          'Anable Basin':      ['Photos/anable basin.jpg']
         },
         'Reserve space': {
-          'Doris':             'Photos/doris.jpeg',
-          "Fong's":            'Photos/fongs.jpg',
-          'The Gate':          'Photos/gate.avif',
-          'Washington Commons':'Photos/washington commons.jpg',
-          'Anable Basin':      'Photos/anable basin.jpg'
+          'Doris':             ['Photos/doris.jpeg', 'Photos/doris 2.jpeg'],
+          "Fong's":            ['Photos/fongs.jpg'],
+          'The Gate':          ['Photos/gate.avif', 'Photos/gate 2.jpg'],
+          'Washington Commons':['Photos/washington commons.jpg'],
+          'Anable Basin':      ['Photos/anable basin.jpg']
         },
         'Reserve space + tab': {
-          'Doris':             'Photos/doris.jpeg',
-          "Fong's":            'Photos/fongs.jpg',
-          'The Gate':          'Photos/gate.avif',
-          'Washington Commons':'Photos/washington commons.jpg',
-          'Anable Basin':      'Photos/anable basin.jpg'
+          'Doris':             ['Photos/doris.jpeg', 'Photos/doris 2.jpeg'],
+          "Fong's":            ['Photos/fongs.jpg'],
+          'The Gate':          ['Photos/gate.avif', 'Photos/gate 2.jpg'],
+          'Washington Commons':['Photos/washington commons.jpg'],
+          'Anable Basin':      ['Photos/anable basin.jpg']
         }
       }
     };
@@ -281,14 +281,14 @@
         const chosenCard = secState.chosen[0] || null;
         const selectedSub = chosenCard ? (secState.suboptions[chosenCard] || null) : null;
 
-        const url =
+        const urls =
           (selectedSub &&
            SUBOPTION_IMAGES[sec.id] &&
            SUBOPTION_IMAGES[sec.id][chosenCard] &&
            SUBOPTION_IMAGES[sec.id][chosenCard][selectedSub]) ||
           (!selectedSub && chosenCard &&
            CARD_IMAGES[sec.id] &&
-           CARD_IMAGES[sec.id][chosenCard]);
+           CARD_IMAGES[sec.id][chosenCard]) || null;
 
         if (url) {
           const alt = selectedSub || chosenCard;
