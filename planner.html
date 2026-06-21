@@ -108,9 +108,9 @@
         'Large buyout':                ['Long Island Bar', 'LaRina']
       },
       welcome: {
-        'Pick a location':                  ['Prospect Park', 'Doris', "Fong's"],
-        'Reserve space':                    ['Doris', "Fong's"],
-        'Reserve space + tab':              ['Doris', "Fong's"],
+        'Pick a location':                  ['Prospect Park', 'Doris', "Fong's", 'The Gate', 'Washington Commons', 'Anable Basin'],
+        'Reserve space':                    ['Doris', "Fong's", 'The Gate', 'Washington Commons', 'Anable Basin'],
+        'Reserve space + tab':              ['Doris', "Fong's", 'The Gate', 'Washington Commons', 'Anable Basin'],
         'Part of dinner restaurant buyout': ['Long Island Bar', 'LaRina']
       },
       ceremony: {
@@ -156,7 +156,31 @@
     };
 
     // Images for selected suboptions: { sectionId: { cardName: { suboptionName: url } } }
-    const SUBOPTION_IMAGES = {};
+    const SUBOPTION_IMAGES = {
+      welcome: {
+        'Pick a location': {
+          'Doris':             'Photos/doris.jpeg',
+          "Fong's":            'Photos/fongs.jpg',
+          'The Gate':          'Photos/gate.avif',
+          'Washington Commons':'Photos/washington commons.jpg',
+          'Anable Basin':      'Photos/anable basin.jpg'
+        },
+        'Reserve space': {
+          'Doris':             'Photos/doris.jpeg',
+          "Fong's":            'Photos/fongs.jpg',
+          'The Gate':          'Photos/gate.avif',
+          'Washington Commons':'Photos/washington commons.jpg',
+          'Anable Basin':      'Photos/anable basin.jpg'
+        },
+        'Reserve space + tab': {
+          'Doris':             'Photos/doris.jpeg',
+          "Fong's":            'Photos/fongs.jpg',
+          'The Gate':          'Photos/gate.avif',
+          'Washington Commons':'Photos/washington commons.jpg',
+          'Anable Basin':      'Photos/anable basin.jpg'
+        }
+      }
+    };
 
     function getCardPrice(sectionId, cardName) {
       const sec = CARD_PRICES[sectionId];
