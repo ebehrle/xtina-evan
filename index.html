@@ -209,7 +209,7 @@
   <p>Please RSVP by [date TBD].</p>
 
   <form
-    action="https://formspree.io/f/YOUR_FORM_ID"
+    action="https://script.google.com/macros/s/AKfycbxHVL19nrJD59ToxOPWh5FUo2HHn5l44fTf-AjaPplaeGJT9b_8eKvdKtosyp48m5BrqA/exec"
     method="POST"
     id="rsvp-form"
   >
@@ -431,17 +431,15 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const data = new FormData(form);
-      const res = await fetch(form.action, {
+      const obj = {};
+      data.forEach((val, key) => { obj[key] = val; });
+      await fetch(form.action, {
         method: 'POST',
-        body: data,
-        headers: { Accept: 'application/json' }
+        body: JSON.stringify(obj),
+        mode: 'no-cors'
       });
-      if (res.ok) {
-        form.style.display = 'none';
-        thanks.style.display = 'block';
-      } else {
-        alert('Something went wrong. Please try again or email us directly.');
-      }
+      form.style.display = 'none';
+      thanks.style.display = 'block';
     });
   </script>
 
