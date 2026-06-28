@@ -317,19 +317,21 @@
 
     function renderHousehold(household) {
       let html = '';
+      const submitter = nameInput.value.trim();
       const members = [...household.members].sort((a, b) =>
         lastName(a).localeCompare(lastName(b))
       );
       members.forEach(name => {
         const key = name.replace(/\s+/g, '_');
+        const isSubmitter = name.toLowerCase() === submitter.toLowerCase();
         html += `<div class="member-block">
           <p class="member-name">${name}</p>
           <label>Welcome Party (Friday)</label>
           ${attendanceSelect(`${key}__welcome`)}
           <label>Ceremony &amp; Reception (Saturday)</label>
           ${attendanceSelect(`${key}__ceremony`)}
-          <label>Email address (optional)</label>
-          <input type="email" name="${key}__email" />
+          <label>${isSubmitter ? "Email address" : "Email address (optional)"}</label>
+          <input type="email" name="${key}__email" ${isSubmitter ? "required" : ''} />
           <label>Dietary restrictions or notes (optional)</label>
           <textarea name="${key}__dietary"></textarea>
         </div>`;
