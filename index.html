@@ -185,6 +185,8 @@
       background: #f0f0f0;
     }
   </style>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css' rel='stylesheet' />
+  <script src='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js'></script>
 </head>
 <body>
 
@@ -247,7 +249,71 @@
 
 
   <h2>Things to do in NYC</h2>
-  <p><a href="https://maps.app.goo.gl/ukhHXmCnWZLnEPak6">Here's a Google Maps list of some of our favorite places in the city.</a></p>
+  <p>Here are some of our favorite places in the city.</p>
+  <div id="map" style="width:100%;height:480px;margin:1em 0 0;border-radius:4px;"></div>
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZWJlaHJsZSIsImEiOiJjbXF6ZXVwaG8wMXE2MnJwdW1weXZrZG1nIn0.QXAs8wv_zyGB3emaJ8xOqA';
+    const places = [
+      { name: 'The Marlton Hotel', type: 'Hotel', coords: [-73.996846, 40.732575] },
+      { name: 'The Long Island Bar', type: 'Cocktail bar', coords: [-73.99641, 40.690655] },
+      { name: 'The Met Cloisters', type: 'Art museum', coords: [-73.931694, 40.864667] },
+      { name: 'El Pingüino', type: 'Bar', coords: [-73.95978, 40.7298] },
+      { name: 'Brooklyn Botanic Garden', type: 'Botanical garden', coords: [-73.96239, 40.66947] },
+      { name: 'North Dumplings', type: 'Dumpling restaurant', coords: [-73.990024, 40.71545] },
+      { name: 'Kuih Cafe', type: 'Malaysian', coords: [-73.992944, 40.715887] },
+      { name: 'Dimes', type: 'Cafe', coords: [-73.991556, 40.714951] },
+      { name: 'Sled Hill', type: 'Park (Prospect Park)', coords: [-73.96851294011275, 40.6704277414961] },
+      { name: 'North Woods', type: 'Park (Central Park)', coords: [-73.95394425751687, 40.79898463727228] },
+      { name: 'Unnameable Books', type: 'Bookstore', coords: [-73.968162, 40.678884] },
+      { name: 'Olde Brooklyn Bagel Shoppe', type: 'Bagel shop', coords: [-73.968637, 40.677758] },
+      { name: "Sharlene's", type: 'Bar', coords: [-73.9721, 40.677055] },
+      { name: 'Covenhoven', type: 'Bar', coords: [-73.960178, 40.675242] },
+      { name: 'Gold Star Beer Counter', type: 'Bar', coords: [-73.966816, 40.675212] },
+      { name: 'Aeon Bookstore', type: 'Bookstore', coords: [-73.990902, 40.71383] },
+      { name: 'Metrograph', type: 'Movie theater', coords: [-73.99109, 40.7151] },
+      { name: 'Seward Park', type: 'Park', coords: [-73.9879, 40.7135] },
+      { name: 'Uncle Lou 快樂人', type: 'Cantonese', coords: [-73.999323, 40.716261] },
+      { name: "Squire's Diner", type: 'Diner', coords: [-74.004052, 40.708934] },
+      { name: 'Golden Diner', type: 'Diner', coords: [-73.994034, 40.712445] },
+      { name: 'Funny Bar', type: 'Bar', coords: [-73.987591, 40.72022] },
+      { name: 'The Magician', type: 'Bar', coords: [-73.987281, 40.719889] },
+      { name: 'T.J. Byrnes Bar & Restaurant', type: 'Irish pub', coords: [-74.004688, 40.709037] },
+      { name: 'Clandestino', type: 'Bar', coords: [-73.990873, 40.714747] },
+      { name: "Mr. Fong's", type: 'Bar', coords: [-73.994182, 40.712441] },
+      { name: 'Asia Roma', type: 'Asian restaurant', coords: [-73.999496, 40.714843] },
+      { name: 'The River', type: 'Bar', coords: [-73.999691, 40.716205] },
+      { name: 'Dreamers Coffee House', type: 'Coffee shop', coords: [-73.995267, 40.712807] },
+      { name: 'Bar Oliver', type: 'Restaurant', coords: [-73.998182, 40.712938] },
+      { name: 'Film Forum', type: 'Movie theater', coords: [-74.004444, 40.72842] },
+      { name: 'Anthology Film Archives', type: 'Movie theater', coords: [-73.990201, 40.724701] },
+      { name: 'B&H Dairy', type: 'Kosher restaurant', coords: [-73.988104, 40.728442] },
+      { name: 'Streecha', type: 'Ukrainian restaurant', coords: [-73.98894, 40.728488] },
+      { name: 'Kettle of Fish', type: 'Bar', coords: [-74.002391, 40.733776] },
+      { name: 'Blue & Gold Tavern', type: 'Bar', coords: [-73.986244, 40.727375] },
+      { name: 'Big Bar', type: 'Bar', coords: [-73.986758, 40.727523] },
+      { name: 'Court Street Grocers', type: 'Sandwich shop', coords: [-73.99849, 40.72884] }
+    ];
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/light-v11',
+      center: [-73.99, 40.73],
+      zoom: 11
+    });
+    map.on('load', () => {
+      const bounds = new mapboxgl.LngLatBounds();
+      places.forEach(place => {
+        bounds.extend(place.coords);
+        const el = document.createElement('div');
+        el.style.cssText = 'width:11px;height:11px;background:#cc0000;border-radius:50%;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.4);cursor:pointer;';
+        new mapboxgl.Marker(el)
+          .setLngLat(place.coords)
+          .setPopup(new mapboxgl.Popup({ offset: 12, closeButton: false }).setHTML('<strong>' + place.name + '</strong><br><span style=color:#666>' + place.type + '</span>'))
+          .addTo(map);
+      });
+      map.fitBounds(bounds, { padding: 40, maxZoom: 13 });
+    });
+    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+  </script>
   <script>
     let guests = [];
     let allNames = [];   // [{name, householdIdx}]
