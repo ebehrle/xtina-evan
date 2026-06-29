@@ -273,6 +273,7 @@
     <button class="map-btn" onclick="filterMap('park')">Parks</button>
     <button class="map-btn" onclick="filterMap('other')">Other</button>
   </div>
+  <div id="map-list" style="margin:0.8em 0;font-size:0.9em;display:none;"></div>
   <div id="map" style="width:100%;height:480px;border-radius:4px;"></div>
   <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoiZWJlaHJsZSIsImEiOiJjbXF6ZXVwaG8wMXE2MnJwdW1weXZrZG1nIn0.QXAs8wv_zyGB3emaJ8xOqA';
@@ -381,11 +382,21 @@
     function filterMap(cat) {
       document.querySelectorAll('.map-btn').forEach(b => b.classList.remove('active'));
       event.target.classList.add('active');
+      const filtered = [];
       markers.forEach(({ marker, cat: mcat, el }) => {
         const show = cat === 'all' || cat === mcat;
         el.style.display = show ? 'flex' : 'none';
-        if (show) marker.getPopup().isOpen() || null;
+        if (show) filtered.push(places.find(p => p.coords[0] === marker.getLngLat().lng));
       });
+      const listEl = document.getElementById('map-list');
+      if (cat === 'all') {
+        listEl.style.display = 'none';
+        listEl.innerHTML = '';
+      } else {
+        const names = filtered.filter(Boolean).map(p => p.name);
+        listEl.innerHTML = names.join(' &nbsp;·&nbsp; ');
+        listEl.style.display = 'block';
+      }
     }
   </script>
   <script>
