@@ -250,49 +250,79 @@
 
   <h2>Things to do in NYC</h2>
   <p>Here are some of our favorite places in the city.</p>
-  <div id="map" style="width:100%;height:480px;margin:1em 0 0;border-radius:4px;"></div>
+  <style>
+    .map-btn {
+      padding: 5px 12px;
+      border: 1px solid #cc0000;
+      background: white;
+      color: #cc0000;
+      cursor: url('Photos/lula.png'), auto !important;
+      font-family: inherit;
+      font-size: 0.85em;
+      font-style: italic;
+      border-radius: 3px;
+    }
+    .map-btn.active { background: #cc0000; color: white; }
+    .mapboxgl-popup-content { font-family: "IBM Plex Sans", sans-serif; font-size: 13px; padding: 8px 12px; }
+    .mapboxgl-popup-content strong { display: block; margin-bottom: 2px; }
+  </style>
+  <div id="map-filters" style="margin:1em 0 8px;display:flex;gap:8px;flex-wrap:wrap;">
+    <button class="map-btn active" onclick="filterMap('all')">All</button>
+    <button class="map-btn" onclick="filterMap('bar')">Bars</button>
+    <button class="map-btn" onclick="filterMap('food')">Food</button>
+    <button class="map-btn" onclick="filterMap('park')">Parks</button>
+    <button class="map-btn" onclick="filterMap('other')">Other</button>
+  </div>
+  <div id="map" style="width:100%;height:480px;border-radius:4px;"></div>
   <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoiZWJlaHJsZSIsImEiOiJjbXF6ZXVwaG8wMXE2MnJwdW1weXZrZG1nIn0.QXAs8wv_zyGB3emaJ8xOqA';
+    const categories = {
+      bar:   { color: '#c0392b', svg: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16L12 14v6"/><path d="M8 20h8"/></svg>' },
+      food:  { color: '#e67e22', svg: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M8 3v5a2 2 0 004 0V3M10 8v13M16 3v18"/></svg>' },
+      park:  { color: '#27ae60', svg: '<svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M12 3L7 10h3.5L7 17h5v4h2v-4h5l-3.5-7H19z"/></svg>' },
+      other: { color: '#8e44ad', svg: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="1"/><path d="M10 9l5 3-5 3V9z" fill="white" stroke="none"/></svg>' }
+    };
     const places = [
-      { name: 'The Marlton Hotel', type: 'Hotel', coords: [-73.996846, 40.732575] },
-      { name: 'The Long Island Bar', type: 'Cocktail bar', coords: [-73.99641, 40.690655] },
-      { name: 'The Met Cloisters', type: 'Art museum', coords: [-73.931694, 40.864667] },
-      { name: 'El Pingüino', type: 'Bar', coords: [-73.95978, 40.7298] },
-      { name: 'Brooklyn Botanic Garden', type: 'Botanical garden', coords: [-73.96239, 40.66947] },
-      { name: 'North Dumplings', type: 'Dumpling restaurant', coords: [-73.990024, 40.71545] },
-      { name: 'Kuih Cafe', type: 'Malaysian', coords: [-73.992944, 40.715887] },
-      { name: 'Dimes', type: 'Cafe', coords: [-73.991556, 40.714951] },
-      { name: 'Sled Hill', type: 'Park (Prospect Park)', coords: [-73.96851294011275, 40.6704277414961] },
-      { name: 'North Woods', type: 'Park (Central Park)', coords: [-73.95394425751687, 40.79898463727228] },
-      { name: 'Unnameable Books', type: 'Bookstore', coords: [-73.968162, 40.678884] },
-      { name: 'Olde Brooklyn Bagel Shoppe', type: 'Bagel shop', coords: [-73.968637, 40.677758] },
-      { name: "Sharlene's", type: 'Bar', coords: [-73.9721, 40.677055] },
-      { name: 'Covenhoven', type: 'Bar', coords: [-73.960178, 40.675242] },
-      { name: 'Gold Star Beer Counter', type: 'Bar', coords: [-73.966816, 40.675212] },
-      { name: 'Aeon Bookstore', type: 'Bookstore', coords: [-73.990902, 40.71383] },
-      { name: 'Metrograph', type: 'Movie theater', coords: [-73.99109, 40.7151] },
-      { name: 'Seward Park', type: 'Park', coords: [-73.9879, 40.7135] },
-      { name: 'Uncle Lou 快樂人', type: 'Cantonese', coords: [-73.999323, 40.716261] },
-      { name: "Squire's Diner", type: 'Diner', coords: [-74.004052, 40.708934] },
-      { name: 'Golden Diner', type: 'Diner', coords: [-73.994034, 40.712445] },
-      { name: 'Funny Bar', type: 'Bar', coords: [-73.987591, 40.72022] },
-      { name: 'The Magician', type: 'Bar', coords: [-73.987281, 40.719889] },
-      { name: 'T.J. Byrnes Bar & Restaurant', type: 'Irish pub', coords: [-74.004688, 40.709037] },
-      { name: 'Clandestino', type: 'Bar', coords: [-73.990873, 40.714747] },
-      { name: "Mr. Fong's", type: 'Bar', coords: [-73.994182, 40.712441] },
-      { name: 'Asia Roma', type: 'Asian restaurant', coords: [-73.999496, 40.714843] },
-      { name: 'The River', type: 'Bar', coords: [-73.999691, 40.716205] },
-      { name: 'Dreamers Coffee House', type: 'Coffee shop', coords: [-73.995267, 40.712807] },
-      { name: 'Bar Oliver', type: 'Restaurant', coords: [-73.998182, 40.712938] },
-      { name: 'Film Forum', type: 'Movie theater', coords: [-74.004444, 40.72842] },
-      { name: 'Anthology Film Archives', type: 'Movie theater', coords: [-73.990201, 40.724701] },
-      { name: 'B&H Dairy', type: 'Kosher restaurant', coords: [-73.988104, 40.728442] },
-      { name: 'Streecha', type: 'Ukrainian restaurant', coords: [-73.98894, 40.728488] },
-      { name: 'Kettle of Fish', type: 'Bar', coords: [-74.002391, 40.733776] },
-      { name: 'Blue & Gold Tavern', type: 'Bar', coords: [-73.986244, 40.727375] },
-      { name: 'Big Bar', type: 'Bar', coords: [-73.986758, 40.727523] },
-      { name: 'Court Street Grocers', type: 'Sandwich shop', coords: [-73.99849, 40.72884] }
+      { name: 'The Marlton Hotel', type: 'Hotel', cat: 'bar', coords: [-73.996846, 40.732575] },
+      { name: 'The Long Island Bar', type: 'Cocktail bar', cat: 'bar', coords: [-73.99641, 40.690655] },
+      { name: 'El Pingüino', type: 'Bar', cat: 'bar', coords: [-73.95978, 40.7298] },
+      { name: "Sharlene's", type: 'Bar', cat: 'bar', coords: [-73.9721, 40.677055] },
+      { name: 'Covenhoven', type: 'Bar', cat: 'bar', coords: [-73.960178, 40.675242] },
+      { name: 'Gold Star Beer Counter', type: 'Bar', cat: 'bar', coords: [-73.966816, 40.675212] },
+      { name: 'Funny Bar', type: 'Bar', cat: 'bar', coords: [-73.987591, 40.72022] },
+      { name: 'The Magician', type: 'Bar', cat: 'bar', coords: [-73.987281, 40.719889] },
+      { name: 'T.J. Byrnes Bar & Restaurant', type: 'Irish pub', cat: 'bar', coords: [-74.004688, 40.709037] },
+      { name: 'Clandestino', type: 'Bar', cat: 'bar', coords: [-73.990873, 40.714747] },
+      { name: "Mr. Fong's", type: 'Bar', cat: 'bar', coords: [-73.994182, 40.712441] },
+      { name: 'The River', type: 'Bar', cat: 'bar', coords: [-73.999691, 40.716205] },
+      { name: 'Kettle of Fish', type: 'Bar', cat: 'bar', coords: [-74.002391, 40.733776] },
+      { name: 'Blue & Gold Tavern', type: 'Bar', cat: 'bar', coords: [-73.986244, 40.727375] },
+      { name: 'Big Bar', type: 'Bar', cat: 'bar', coords: [-73.986758, 40.727523] },
+      { name: 'North Dumplings', type: 'Dumpling restaurant', cat: 'food', coords: [-73.990024, 40.71545] },
+      { name: 'Kuih Cafe', type: 'Malaysian', cat: 'food', coords: [-73.992944, 40.715887] },
+      { name: 'Dimes', type: 'Cafe', cat: 'food', coords: [-73.991556, 40.714951] },
+      { name: 'Olde Brooklyn Bagel Shoppe', type: 'Bagel shop', cat: 'food', coords: [-73.968637, 40.677758] },
+      { name: 'Uncle Lou 快樂人', type: 'Cantonese', cat: 'food', coords: [-73.999323, 40.716261] },
+      { name: "Squire's Diner", type: 'Diner', cat: 'food', coords: [-74.004052, 40.708934] },
+      { name: 'Golden Diner', type: 'Diner', cat: 'food', coords: [-73.994034, 40.712445] },
+      { name: 'Asia Roma', type: 'Asian restaurant', cat: 'food', coords: [-73.999496, 40.714843] },
+      { name: 'Dreamers Coffee House', type: 'Coffee shop', cat: 'food', coords: [-73.995267, 40.712807] },
+      { name: 'Bar Oliver', type: 'Restaurant', cat: 'food', coords: [-73.998182, 40.712938] },
+      { name: 'B&H Dairy', type: 'Kosher restaurant', cat: 'food', coords: [-73.988104, 40.728442] },
+      { name: 'Streecha', type: 'Ukrainian restaurant', cat: 'food', coords: [-73.98894, 40.728488] },
+      { name: 'Court Street Grocers', type: 'Sandwich shop', cat: 'food', coords: [-73.99849, 40.72884] },
+      { name: 'Sled Hill', type: 'Park (Prospect Park)', cat: 'park', coords: [-73.96851294011275, 40.6704277414961] },
+      { name: 'North Woods', type: 'Park (Central Park)', cat: 'park', coords: [-73.95394425751687, 40.79898463727228] },
+      { name: 'Seward Park', type: 'Park', cat: 'park', coords: [-73.9879, 40.7135] },
+      { name: 'Brooklyn Botanic Garden', type: 'Botanical garden', cat: 'park', coords: [-73.96239, 40.66947] },
+      { name: 'The Met Cloisters', type: 'Art museum', cat: 'other', coords: [-73.931694, 40.864667] },
+      { name: 'Metrograph', type: 'Movie theater', cat: 'other', coords: [-73.99109, 40.7151] },
+      { name: 'Film Forum', type: 'Movie theater', cat: 'other', coords: [-74.004444, 40.72842] },
+      { name: 'Anthology Film Archives', type: 'Movie theater', cat: 'other', coords: [-73.990201, 40.724701] },
+      { name: 'Unnameable Books', type: 'Bookstore', cat: 'other', coords: [-73.968162, 40.678884] },
+      { name: 'Aeon Bookstore', type: 'Bookstore', cat: 'other', coords: [-73.990902, 40.71383] }
     ];
+    const markers = [];
     const map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/mapbox/light-v11',
@@ -303,16 +333,28 @@
       const bounds = new mapboxgl.LngLatBounds();
       places.forEach(place => {
         bounds.extend(place.coords);
+        const cat = categories[place.cat];
         const el = document.createElement('div');
-        el.style.cssText = 'width:11px;height:11px;background:#cc0000;border-radius:50%;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.4);cursor:pointer;';
-        new mapboxgl.Marker(el)
+        el.style.cssText = 'width:24px;height:24px;background:' + cat.color + ';border-radius:50%;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.4);cursor:pointer;display:flex;align-items:center;justify-content:center;';
+        el.innerHTML = cat.svg;
+        const marker = new mapboxgl.Marker(el)
           .setLngLat(place.coords)
-          .setPopup(new mapboxgl.Popup({ offset: 12, closeButton: false }).setHTML('<strong>' + place.name + '</strong><br><span style=color:#666>' + place.type + '</span>'))
+          .setPopup(new mapboxgl.Popup({ offset: 14, closeButton: false }).setHTML('<strong>' + place.name + '</strong><span style="color:#666">' + place.type + '</span>'))
           .addTo(map);
+        markers.push({ marker, cat: place.cat, el });
       });
       map.fitBounds(bounds, { padding: 40, maxZoom: 13 });
     });
     map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    function filterMap(cat) {
+      document.querySelectorAll('.map-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      markers.forEach(({ marker, cat: mcat, el }) => {
+        const show = cat === 'all' || cat === mcat;
+        el.style.display = show ? 'flex' : 'none';
+        if (show) marker.getPopup().isOpen() || null;
+      });
+    }
   </script>
   <script>
     let guests = [];
