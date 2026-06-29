@@ -331,8 +331,9 @@
     });
     map.on('load', () => {
       const bounds = new mapboxgl.LngLatBounds();
+      const boundsExclude = ['The Met Cloisters', 'North Woods'];
       places.forEach(place => {
-        bounds.extend(place.coords);
+        if (!boundsExclude.includes(place.name)) bounds.extend(place.coords);
         const cat = categories[place.cat];
         const el = document.createElement('div');
         el.style.cssText = 'width:24px;height:24px;background:' + cat.color + ';border-radius:50%;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.4);cursor:pointer;display:flex;align-items:center;justify-content:center;';
