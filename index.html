@@ -394,10 +394,8 @@
       const listEl = document.getElementById('map-list');
 
       if (cat === 'all') {
-        listEl.style.display = 'none';
-        listEl.innerHTML = '';
-        detailEl.style.display = 'none';
-        detailEl.innerHTML = '';
+        listEl.innerHTML = places.map(p => p.name).join(' &nbsp;&middot;&nbsp; ');
+        listEl.style.display = 'block';
       } else {
         const validPlaces = filtered.filter(Boolean);
         const names = validPlaces.map(p => p.name);
