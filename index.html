@@ -349,6 +349,9 @@
         markers.push({ marker, cat: place.cat, el });
       });
       map.fitBounds(bounds, { padding: 40, maxZoom: 13 });
+      const listEl = document.getElementById('map-list');
+      listEl.innerHTML = places.map(p => p.name).join(' &nbsp;&middot;&nbsp; ');
+      listEl.style.display = 'block';
 
       map.addSource('places', {
         type: 'geojson',
