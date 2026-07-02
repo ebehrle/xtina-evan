@@ -464,8 +464,8 @@
       }
     }
 
-    function attendanceSelect(fieldName) {
-      return `<select name="${fieldName}" required>
+    function attendanceSelect(fieldName, req = true) {
+      return `<select name="${fieldName}" ${req ? "required" : ""}>
         <option value="">-- select --</option>
         <option value="yes">Attending</option>
         <option value="no">Not attending</option>
@@ -503,9 +503,9 @@
           <label>Guest's name</label>
           <input type="text" name="plus_one_name" placeholder="Full name (leave blank if not bringing a guest)" />
           <label>Welcome Party (Friday)</label>
-          ${attendanceSelect('plus_one__welcome')}
+          ${attendanceSelect('plus_one__welcome', false)}
           <label>Ceremony &amp; Reception (Saturday)</label>
-          ${attendanceSelect('plus_one__ceremony')}
+          ${attendanceSelect('plus_one__ceremony', false)}
           <label>Email address (optional)</label>
           <input type="email" name="plus_one__email" />
           <label>Dietary restrictions or notes (optional)</label>
