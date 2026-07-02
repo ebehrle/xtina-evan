@@ -501,7 +501,7 @@
       if (household.plus_one) {
         html += `<div class="member-block">
           <label>Guest's name</label>
-          <input type="text" name="plus_one_name" placeholder="Full name (leave blank if not bringing a guest)" />
+          <input type="text" name="plus_one_name" placeholder="Full name (leave blank if not bringing a guest)" oninput="togglePlusOneRequired(this.value)" />
           <label>Welcome Party (Friday)</label>
           ${attendanceSelect('plus_one__welcome', false)}
           <label>Ceremony &amp; Reception (Saturday)</label>
@@ -592,6 +592,13 @@
     // Handle submit
     const form = document.getElementById('rsvp-form');
     const thanks = document.getElementById('thank-you');
+
+    function togglePlusOneRequired(val) {
+      const required = val.trim().length > 0;
+      document.querySelectorAll('[name=plus_one__welcome], [name=plus_one__ceremony]').forEach(el => {
+        el.required = required;
+      });
+    }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
