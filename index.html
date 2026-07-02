@@ -344,7 +344,7 @@
         el.innerHTML = cat.svg;
         const marker = new mapboxgl.Marker(el)
           .setLngLat(place.coords)
-          .setPopup(new mapboxgl.Popup({ offset: 14, closeButton: false }).setHTML('<strong>' + place.name + '</strong><span style="color:#666">' + place.type + '</span>'))
+          .setPopup(new mapboxgl.Popup({ offset: 14, closeButton: false }).setHTML('<strong><a href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(place.name + ' New York') + '" target="_blank" style="color:inherit;">' + place.name + '</a></strong><span style="color:#666">' + place.type + '</span>'))
           .addTo(map);
         markers.push({ marker, cat: place.cat, el });
       });
@@ -402,7 +402,7 @@
         listEl.style.display = 'none';
         listEl.innerHTML = '';
       } else {
-        listEl.innerHTML = visibleNames.join(' &nbsp;&middot;&nbsp; ');
+        listEl.innerHTML = filtered.filter(Boolean).map(p => '<a href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(p.name + ' New York') + '" target="_blank" style="color:inherit;">' + p.name + '</a>').join(' &nbsp;&middot;&nbsp; ');
         listEl.style.display = 'block';
       }
     }
