@@ -394,15 +394,16 @@
       });
       const listEl = document.getElementById('map-list');
 
+      const visibleNames = cat === 'all' ? places.map(p => p.name) : filtered.filter(Boolean).map(p => p.name);
+      if (map.getLayer('place-labels')) {
+        map.setFilter('place-labels', ['in', ['get', 'name'], ['literal', visibleNames]]);
+      }
       if (cat === 'all') {
         listEl.style.display = 'none';
         listEl.innerHTML = '';
       } else {
-        const validPlaces = filtered.filter(Boolean);
-        const names = validPlaces.map(p => p.name);
-        listEl.innerHTML = names.join(' &nbsp;·&nbsp; ');
+        listEl.innerHTML = visibleNames.join(' &nbsp;Â·&nbsp; ');
         listEl.style.display = 'block';
-
       }
     }
   </script>
