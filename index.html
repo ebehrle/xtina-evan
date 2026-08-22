@@ -10,6 +10,7 @@
 
 
   <title>Cristina &amp; Evan</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 90'%3E%3Cpath d='M50 82 C50 82 8 54 8 30 C8 16 19 6 32 8 C40 9 46 15 50 22 C54 15 60 9 68 8 C81 6 92 16 92 30 C92 54 50 82 50 82 Z' fill='%23cc0000'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
   <style>
     * { cursor: url('Photos/lula.png'), auto !important; }
@@ -63,6 +64,25 @@
 
     .event-name {
       font-weight: bold;
+    }
+
+    .day-label {
+      font-size: 1em;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .event-title {
+      margin-bottom: 0.1em;
+    }
+
+    .event-detail {
+      margin-top: 0.1em;
+    }
+
+    .pipe {
+      font-style: normal;
+      margin: 0 0.3em;
     }
 
     a {
@@ -191,21 +211,27 @@
 <body>
 
   <h1>Cristina Ballarini &amp; Evan Behrle</h1>
-  <p>May 2027 &mdash; New York, New York <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 90" width="22" height="20" style="vertical-align:middle; margin-left:15px;"><path d="M50 82 C50 82 8 54 8 30 C8 16 19 6 32 8 C40 9 46 15 50 22 C54 15 60 9 68 8 C81 6 92 16 92 30 C92 54 50 82 50 82 Z" fill="#cc0000"/></svg></p>
+  <p>May 28&ndash;29, 2027 &mdash; New York, New York <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 90" width="22" height="20" style="vertical-align:middle; margin-left:15px;"><path d="M50 82 C50 82 8 54 8 30 C8 16 19 6 32 8 C40 9 46 15 50 22 C54 15 60 9 68 8 C81 6 92 16 92 30 C92 54 50 82 50 82 Z" fill="#cc0000"/></svg></p>
 
-  <h2>Events</h2>
+  <h2>Schedule</h2>
   <ul>
-    <li>
-      <p><strong>Welcome Party</strong>, Friday, May 28</p>
-      <p>Location TBA &mdash; Check back here for more info!</p>
-      <p>Dress: Cocktail</p>
-
+    <li style="margin-bottom: 0.5em;">
+      <p class="day-label">Friday, May 28</p>
     </li>
     <li>
-      <p><strong>Ceremony & Reception</strong>, Saturday, May 29</p>
-      <p>Ceremony @ Columbus Park, Mulberry St &amp; Baxter St</p>
-      <p>Reception @ Golden Unicorn, 18 E Broadway</p>
-      <p>Dress: Formal</p>
+      <p class="event-title"><strong>Welcome Party</strong></p>
+      <p class="event-detail">Funny Bar (133 Essex St) <span class="pipe">|</span> 8&ndash;11pm <span class="pipe">|</span> Cocktail attire</p>
+    </li>
+    <li style="margin-top: 2.4em; margin-bottom: 0.5em;">
+      <p class="day-label">Saturday, May 29</p>
+    </li>
+    <li style="margin-bottom: 0.5em;">
+      <p class="event-title"><strong>Ceremony</strong></p>
+      <p class="event-detail">Columbus Park (Mulberry St &amp; Baxter St) <span class="pipe">|</span> 4pm <span class="pipe">|</span> Formal attire</p>
+    </li>
+    <li>
+      <p class="event-title"><strong>Reception</strong></p>
+      <p class="event-detail">Golden Unicorn (18 E Broadway) <span class="pipe">|</span> 5pm <span class="pipe">|</span> Formal attire</p>
     </li>
   </ul>
 
@@ -351,7 +377,7 @@
           .addTo(map);
         markers.push({ marker, cat: place.cat, el });
       });
-      map.fitBounds(bounds, { padding: 40, maxZoom: 13 });
+      map.fitBounds(bounds, { padding: 40, maxZoom: 13, animate: false });
 
 
       map.addSource('places', {
