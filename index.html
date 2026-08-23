@@ -19,9 +19,9 @@
     * { cursor: url('Photos/lula.png'), auto !important; }
     input[type="text"], input[type="email"], textarea { cursor: text !important; }
     body { cursor: url('Photos/lula.png'), auto;
-      font-family: "ZCOOL XiaoWei", serif; font-style: italic;
+      font-family: "ZCOOL XiaoWei", serif; font-style: normal;
       font-size: 15px;
-      line-height: 1.6;
+      line-height: 1.4;
       max-width: 640px;
       margin: 60px auto;
       padding: 0 20px 80px;
@@ -29,7 +29,7 @@
       background: #fdf8f0;
     }
 
-    h1 { font-family: "ZCOOL XiaoWei", serif; font-style: italic; font-family: "ZCOOL XiaoWei", serif; font-style: italic; font-family: "ZCOOL XiaoWei", serif; font-style: italic;
+    h1 { font-family: "ZCOOL XiaoWei", serif; font-style: normal;
       font-size: 1.6em;
       font-weight: normal;
       margin-bottom: 0.2em;
@@ -43,9 +43,9 @@
     }
 
     h2 {
-      font-size: 1em;
-      font-weight: bold;
-      margin-top: 2em;
+      font-size: 1.3em;
+      font-weight: normal;
+      margin-top: 1.5em;
       margin-bottom: 0.4em;
       border-bottom: 1px solid #111;
       padding-bottom: 0.2em;
@@ -70,22 +70,33 @@
     }
 
     .day-label {
-      font-size: 1em;
-      letter-spacing: 1px;
+      font-size: 1.15em;
+      text-transform: lowercase;
+    }
+
+    .day-label::first-letter {
       text-transform: uppercase;
     }
 
+    .day-label .no-transform {
+      text-transform: none;
+    }
+
     .event-title {
-      margin-bottom: 0.1em;
+      margin-bottom: 0.05em;
+    }
+
+    .event-title strong {
+      font-weight: normal;
     }
 
     .event-detail {
-      margin-top: 0.1em;
+      margin-top: 0.05em;
+      font-style: italic;
     }
 
     .pipe {
       font-style: normal;
-      margin: 0 0.3em;
     }
 
     a {
@@ -214,27 +225,27 @@
 <body>
 
   <h1>Cristina Ballarini &amp; Evan Behrle</h1>
-  <p>May 28&ndash;29, 2027 &mdash; New York, New York <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 90" width="22" height="20" style="vertical-align:middle; margin-left:15px;"><path d="M50 82 C50 82 8 54 8 30 C8 16 19 6 32 8 C40 9 46 15 50 22 C54 15 60 9 68 8 C81 6 92 16 92 30 C92 54 50 82 50 82 Z" fill="#cc0000"/></svg></p>
+  <p style="font-style: italic;">May 28&ndash;29, 2027 &mdash; New York, New York <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 90" width="22" height="20" style="vertical-align:middle; margin-left:15px;"><path d="M50 82 C50 82 8 54 8 30 C8 16 19 6 32 8 C40 9 46 15 50 22 C54 15 60 9 68 8 C81 6 92 16 92 30 C92 54 50 82 50 82 Z" fill="#cc0000"/></svg></p>
 
-  <h2>Schedule</h2>
+  <h2 style="margin-bottom: 0.4em;">Schedule</h2>
   <ul>
     <li style="margin-bottom: 0.5em;">
-      <p class="day-label">Friday, May 28</p>
+      <p class="day-label">Friday, <span class="no-transform">May</span> 28</p>
     </li>
     <li>
       <p class="event-title"><strong>Welcome Party</strong></p>
-      <p class="event-detail">Funny Bar (133 Essex St) <span class="pipe">|</span> 8&ndash;11pm <span class="pipe">|</span> Cocktail attire</p>
+      <p class="event-detail">Funny Bar (<a href="https://www.google.com/maps/search/?api=1&query=Funny+Bar+133+Essex+St+New+York" target="_blank">133 Essex St</a>) <span class="pipe">|</span> 8&ndash;11pm <span class="pipe">|</span> Cocktail attire</p>
     </li>
-    <li style="margin-top: 2.4em; margin-bottom: 0.5em;">
-      <p class="day-label">Saturday, May 29</p>
+    <li style="margin-top: 1.4em; margin-bottom: 0.5em;">
+      <p class="day-label">Saturday, <span class="no-transform">May</span> 29</p>
     </li>
     <li style="margin-bottom: 0.5em;">
       <p class="event-title"><strong>Ceremony</strong></p>
-      <p class="event-detail">Columbus Park (Mulberry St &amp; Baxter St) <span class="pipe">|</span> 4pm <span class="pipe">|</span> Formal attire</p>
+      <p class="event-detail">Columbus Park (<a href="https://www.google.com/maps/search/?api=1&query=Columbus+Park+Mulberry+St+Baxter+St+New+York" target="_blank">Mulberry St &amp; Baxter St</a>) <span class="pipe">|</span> 4pm <span class="pipe">|</span> Formal attire</p>
     </li>
     <li>
       <p class="event-title"><strong>Reception</strong></p>
-      <p class="event-detail">Golden Unicorn (18 E Broadway) <span class="pipe">|</span> 5pm <span class="pipe">|</span> Formal attire</p>
+      <p class="event-detail">Golden Unicorn (<a href="https://www.google.com/maps/search/?api=1&query=Golden+Unicorn+18+E+Broadway+New+York" target="_blank">18 E Broadway</a>) <span class="pipe">|</span> 5pm <span class="pipe">|</span> Formal attire</p>
     </li>
   </ul>
 
@@ -281,7 +292,8 @@
 
 
   <h2>Hotels</h2>
-  <p>[TODO]</p>
+  <p>We have hotel blocks at the <a href="https://www.marriott.com/en-us/hotels/nycfm-fairfield-inn-and-suites-new-york-manhattan-downtown-east/overview/" target="_blank">Fairfield by Marriott</a> and <a href="https://www.hyatt.com/jdv-by-hyatt/en-US/lgajd-jdv-50-bowery" target="_blank">Hotel 50 Bowery</a>, which are both within walking distance of the welcome party, ceremony, and reception.</p>
+  <p>For fancier options, you might try <a href="https://nineorchard.com/" target="_blank">Nine Orchard</a> or <a href="https://theboweryhotel.com/" target="_blank">The Bowery Hotel</a> (as immortalized in "It Ain't Me" by Kygo and Selena Gomez).</p>
 
   <h2>Places we like in NYC</h2>
   
