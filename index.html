@@ -333,7 +333,7 @@
     const places = [
       { name: 'The Marlton Hotel', type: 'Hotel', cat: 'bar', note: '', coords: [-73.996846, 40.732575] },
       { name: 'The Long Island Bar', type: 'Cocktail bar', cat: 'bar', note: '', coords: [-73.99641, 40.690655] },
-      { name: 'El Pingüino', type: 'Bar', cat: 'bar', note: '', coords: [-73.95978, 40.7298] },
+      { name: 'El Pingüino', type: 'Bar', cat: 'bar', cats: ['food'], note: '', coords: [-73.95978, 40.7298] },
       { name: "Sharlene's", type: 'Bar', cat: 'bar', note: '', coords: [-73.9721, 40.677055] },
       { name: 'Covenhoven', type: 'Bar', cat: 'bar', note: '', coords: [-73.960178, 40.675242] },
       { name: 'Gold Star Beer Counter', type: 'Bar', cat: 'bar', note: '', coords: [-73.966816, 40.675212] },
@@ -353,9 +353,10 @@
       { name: 'Uncle Lou 快樂人', type: 'Cantonese', cat: 'food', note: '', coords: [-73.999323, 40.716261] },
       { name: "Squire's Diner", type: 'Diner', cat: 'food', note: '', coords: [-74.004052, 40.708934] },
       { name: 'Golden Diner', type: 'Diner', cat: 'food', note: '', coords: [-73.994034, 40.712445] },
-      { name: 'Asia Roma', type: 'Asian restaurant', cat: 'food', note: '', coords: [-73.999496, 40.714843] },
+      { name: 'Asia Roma', type: 'Asian restaurant', cat: 'bar', note: '', coords: [-73.999496, 40.714843] },
+      { name: 'Bolzot', type: 'Bar', cat: 'bar', note: '', coords: [-73.994457, 40.711686] },
       { name: 'Dreamers Coffee House', type: 'Coffee shop', cat: 'food', note: '', coords: [-73.995267, 40.712807] },
-      { name: 'Bar Oliver', type: 'Restaurant', cat: 'food', note: '', coords: [-73.998182, 40.712938] },
+      { name: 'Bar Oliver', type: 'Restaurant', cat: 'food', cats: ['bar'], note: '', coords: [-73.998182, 40.712938] },
       { name: 'B&H Dairy', type: 'Kosher restaurant', cat: 'food', note: '', coords: [-73.988104, 40.728442] },
       { name: 'Streecha', type: 'Ukrainian restaurant', cat: 'food', note: '', coords: [-73.98894, 40.728488] },
       { name: 'Court Street Grocers', type: 'Sandwich shop', cat: 'food', note: '', coords: [-73.99849, 40.72884], url: 'https://maps.app.goo.gl/UrD1ZQ4BEA1SBpM57' },
@@ -388,9 +389,9 @@
         el.innerHTML = cat.svg;
         const marker = new mapboxgl.Marker(el)
           .setLngLat(place.coords)
-          .setPopup(new mapboxgl.Popup({ offset: 14, closeButton: false }).setHTML('<strong><a href="' + (place.url || 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(place.name + ' New York')) + '" target="_blank" style="color:inherit;">' + place.name + '</a></strong><span style="color:#666">' + place.type + '</span>'))
+          .setPopup(new mapboxgl.Popup({ offset: 14, closeButton: false }).setHTML('<strong><a href="' + (place.url || 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(place.name + ' New York')) + '" target="_blank" style="color:inherit;">' + place.name + '</a></strong>'))
           .addTo(map);
-        markers.push({ marker, cat: place.cat, el });
+        markers.push({ marker, cat: place.cat, cats: place.cats, el });
       });
       map.fitBounds(bounds, { padding: 40, maxZoom: 13, animate: false });
 
@@ -431,9 +432,13 @@
       document.querySelectorAll('.map-btn').forEach(b => b.classList.remove('active'));
       event.target.classList.add('active');
       const filtered = [];
-      markers.forEach(({ marker, cat: mcat, el }) => {
-        const show = cat === 'all' || cat === mcat;
+      markers.forEach(({ marker, cat: mcat, cats: mcats, el }) => {
+        const show = cat === 'all' || cat === mcat || (mcats && mcats.includes(cat));
         el.style.display = show ? 'flex' : 'none';
+        const iconCat = cat !== 'all' && (cat === mcat || (mcats && mcats.includes(cat))) ? cat : mcat;
+        const iconInfo = categories[iconCat];
+        el.style.background = iconInfo.color;
+        el.innerHTML = iconInfo.svg;
         if (show) filtered.push(places.find(p => p.coords[0] === marker.getLngLat().lng));
       });
       const listEl = document.getElementById('map-list');
