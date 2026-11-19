@@ -544,8 +544,8 @@
           ${attendanceSelect(`${key}__welcome`)}
           <label>Ceremony &amp; Reception (Saturday)</label>
           ${attendanceSelect(`${key}__ceremony`)}
-          <label>${isSubmitter ? "Email address" : "Email address (optional)"}</label>
-          <input type="email" name="${key}__email" ${isSubmitter ? "required" : ''} />
+          <label>Email address</label>
+          <input type="email" name="${key}__email" required />
           <label>Dietary restrictions or notes (optional)</label>
           <textarea name="${key}__dietary"></textarea>
         </div>`;
@@ -558,7 +558,7 @@
           ${attendanceSelect('plus_one__welcome', false)}
           <label>Ceremony &amp; Reception (Saturday)</label>
           ${attendanceSelect('plus_one__ceremony', false)}
-          <label>Email address (optional)</label>
+          <label>Email address</label>
           <input type="email" name="plus_one__email" />
           <label>Dietary restrictions or notes (optional)</label>
           <textarea name="plus_one__dietary"></textarea>
@@ -593,7 +593,8 @@
         item.name.toLowerCase().startsWith(lower)
       );
 
-      showSuggestions(matches);
+      // Only show the dropdown once the full name has been typed
+      showSuggestions(matches.filter(item => item.name.toLowerCase() === lower));
 
       // If the typed value is an exact match, render the household
       const exactIdx = nameMap[lower];
@@ -647,7 +648,7 @@
 
     function togglePlusOneRequired(val) {
       const required = val.trim().length > 0;
-      document.querySelectorAll('[name=plus_one__welcome], [name=plus_one__ceremony]').forEach(el => {
+      document.querySelectorAll('[name=plus_one__welcome], [name=plus_one__ceremony], [name=plus_one__email]').forEach(el => {
         el.required = required;
       });
     }
